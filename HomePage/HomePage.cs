@@ -71,6 +71,13 @@ namespace HomePage
             registerPage.Show();
             Hide();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MainPage mainPage = new MainPage();
+            mainPage.Show();
+            Hide();
+        }
     }
 
     public class Movie

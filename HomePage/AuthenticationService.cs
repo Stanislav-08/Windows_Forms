@@ -2,21 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace App
 {
-
-    /// <summary>
-    /// VIJ GOOOOOOOOOOOOO
-    /// </summary>
-
-
-   ///maika vi microsoft
-   //////ebnete se debeli maimuni
-
     public class AuthenticationService
     {
         public readonly HttpClient client = new HttpClient();
@@ -89,6 +81,17 @@ namespace App
 
             var doc = JsonDocument.Parse(json);
             return doc.RootElement.GetProperty("access_token").GetString();
+        }
+
+        public async Task<List<Movie>> GetMovies()
+        {
+            var response = await client.GetAsync($"{supabaseUrl}/rest/v1/movies?select=*");
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<List<Movie>>(json);
         }
     }
 }
