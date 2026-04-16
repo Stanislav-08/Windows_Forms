@@ -63,5 +63,12 @@ namespace App
                 flowLayoutPanel1.Controls.Add(card);
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            PersonPage personPage = new PersonPage();
+            personPage.Show();
+            Hide();
+        }
     }
 }
