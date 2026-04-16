@@ -103,6 +103,7 @@
             Controls.Add(RegisterButton);
             Controls.Add(button1);
             Controls.Add(textBox1);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "HomePage";
             Text = "HomePage";
             Load += HomePage_Load;
