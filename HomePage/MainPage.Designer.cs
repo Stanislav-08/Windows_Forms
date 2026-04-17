@@ -29,32 +29,31 @@
         private void InitializeComponent()
         {
             flowLayoutPanel1 = new FlowLayoutPanel();
-            button1 = new Button();
+            flowLayoutPanel2 = new FlowLayoutPanel();
             SuspendLayout();
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(31, 144);
+            flowLayoutPanel1.Location = new Point(37, 54);
+            flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(723, 100);
+            flowLayoutPanel1.Size = new Size(723, 130);
             flowLayoutPanel1.TabIndex = 0;
             // 
-            // button1
+            // flowLayoutPanel2
             // 
-            button1.Location = new Point(363, 289);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 1;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            flowLayoutPanel2.Location = new Point(37, 284);
+            flowLayoutPanel2.Margin = new Padding(0);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(723, 130);
+            flowLayoutPanel2.TabIndex = 1;
             // 
             // MainPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(button1);
+            Controls.Add(flowLayoutPanel2);
             Controls.Add(flowLayoutPanel1);
             Name = "MainPage";
             Text = "MainPage";
@@ -65,6 +64,6 @@
         #endregion
 
         private FlowLayoutPanel flowLayoutPanel1;
-        private Button button1;
+        private FlowLayoutPanel flowLayoutPanel2;
     }
 }

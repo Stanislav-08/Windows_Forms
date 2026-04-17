@@ -83,15 +83,15 @@ namespace App
             return doc.RootElement.GetProperty("access_token").GetString();
         }
 
-        public async Task<List<Movie>> GetMovies()
+        public async Task<List<T>> GetDatabase<T>(string database)
         {
-            var response = await client.GetAsync($"{supabaseUrl}/rest/v1/movies?select=*");
+            var response = await client.GetAsync($"{supabaseUrl}/rest/v1/{database}?select=*");
 
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<List<Movie>>(json);
+            return JsonSerializer.Deserialize<List<T>>(json);
         }
     }
 }

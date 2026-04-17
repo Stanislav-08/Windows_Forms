@@ -12,7 +12,7 @@ namespace App
 {
     public partial class MoviePage : Form
     {
-        public MoviePage()
+        public MoviePage(string title, string description, string url)
         {
             InitializeComponent();
         }

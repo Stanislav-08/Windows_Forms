@@ -12,20 +12,17 @@ namespace App
 {
     public partial class PersonPage : Form
     {
-        public PersonPage()
+        public PersonPage(string name, string info, string url)
         {
             InitializeComponent();
+            pictureBox1.Load(url);
+            label1.Text = name;
+            label2.Text = info;
+            toolStripMenuItem2.Image = Icons.Get("menu");
+            toolStripMenuItem2.Dock=DockStyle.Left;
+
             button1.Image = Icons.Get("star");
             button2.Image = Icons.Get("outlined_thumb");
-        }
-
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -43,6 +40,10 @@ namespace App
                 button2.Image = Icons.Get("filled_thumb");
                 button2.Tag = "off";
             }
+        }
+
+        private async void PersonPage_Load(object sender, EventArgs e)
+        {
         }
     }
 
