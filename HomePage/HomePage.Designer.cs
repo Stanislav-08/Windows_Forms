@@ -95,6 +95,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "HomePage";
             Text = "HomePage";
+            Load += HomePage_Load;
             ResumeLayout(false);
             PerformLayout();
         }

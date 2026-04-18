@@ -12,6 +12,8 @@ namespace App
 {
     public partial class MainPage : Form
     {
+        private readonly string supabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
+
         public MainPage()
         {
             InitializeComponent();
@@ -36,6 +38,7 @@ namespace App
 
         private async void MainPage_Load(object sender, EventArgs e)
         {
+
             await LoadMovies();
             await LoadPeople();
         }
@@ -52,7 +55,10 @@ namespace App
 
             foreach (var movie in movies)
             {
-                var card = CreateCard(movie.title, movie.url);
+                string imageUrl =
+                    $"{supabaseUrl}/storage/v1/object/public/movies/{movie.poster_path}";
+
+                var card = CreateCard(movie.title, imageUrl);
 
                 card.Tag = movie;
                 card.Click += MovieCard_Click;
@@ -139,7 +145,10 @@ namespace App
             var card = GetCard(sender as Control);
             if (card?.Tag is not Movie movie) return;
 
-            new MoviePage(movie.title, movie.description, movie.url).ShowDialog();
+            string imageUrl =
+                $"{supabaseUrl}/storage/v1/object/public/movies/{movie.poster_path}";
+
+            new MoviePage(movie.title, movie.description, imageUrl).ShowDialog();
         }
 
         private void PersonCard_Click(object sender, EventArgs e)

@@ -13,6 +13,6 @@ namespace App.Databases
         public double rating { get; set; }
         public int release_year { get; set; }
         public string description { get; set; }
-        public string url { get; set; }
+        public string poster_path { get; set; }
     }
 }

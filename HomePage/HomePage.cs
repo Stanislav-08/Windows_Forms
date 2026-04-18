@@ -1,4 +1,5 @@
 using App;
+using App.Services;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -39,6 +40,10 @@ namespace HomePage
             MainPage mainPage = new MainPage();
             mainPage.Show();
             Hide();
+        }
+
+        private async void HomePage_Load(object sender, EventArgs e)
+        {
         }
     }
 
