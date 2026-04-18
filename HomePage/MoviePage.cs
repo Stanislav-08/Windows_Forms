@@ -15,6 +15,11 @@ namespace App
         public MoviePage(string title, string description, string url)
         {
             InitializeComponent();
+
+            //Title Bar 
+            TitleBar titleBar = new TitleBar();
+            titleBar.Dock = DockStyle.Top;
+            this.Controls.Add(titleBar);
         }
     }
 }

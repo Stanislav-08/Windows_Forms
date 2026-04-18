@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,12 @@ namespace App
         public PersonPage(string name, string info, string url)
         {
             InitializeComponent();
+
+            //Title Bar 
+            TitleBar titleBar = new TitleBar();
+            titleBar.Dock = DockStyle.Top;
+            this.Controls.Add(titleBar);
+
             pictureBox1.Load(url);
             label1.Text = name;
             label2.Text = info;

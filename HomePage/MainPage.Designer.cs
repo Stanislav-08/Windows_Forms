@@ -52,9 +52,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1000, 500);
             Controls.Add(flowLayoutPanel2);
             Controls.Add(flowLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "MainPage";
             Text = "MainPage";
             Load += MainPage_Load;

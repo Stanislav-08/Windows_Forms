@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App
+namespace App.Services
 {
     public static class Icons
     {
@@ -28,5 +28,23 @@ namespace App
 
             return img;
         }
+        public static Image Get(string name, int size)
+        {
+            var original = Get(name);
+            if (original == null) return null;
+
+            var bmp = new Bitmap(size, size);
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.InterpolationMode =
+                    System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+                g.DrawImage(original, 0, 0, size, size);
+            }
+
+            return bmp;
+        }
     }
 }
+

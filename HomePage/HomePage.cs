@@ -10,52 +10,14 @@ namespace HomePage
 {
     public partial class HomePage : Form
     {
-        private readonly HttpClient client = new HttpClient();
-
-        private readonly string supabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
-        private readonly string apiKey = "sb_publishable_xFOf5KlGK5vMTPLz1cdH6Q_Q14a5n5f";
-
         public HomePage()
         {
             InitializeComponent();
 
-            client.DefaultRequestHeaders.Add("apikey", apiKey);
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", apiKey);
-
-            LoadMovies();
-        }
-
-        private async void LoadMovies()
-        {
-            var response = await client.GetAsync($"{supabaseUrl}/rest/v1/movies?select=*");
-            var json = await response.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var movies = JsonSerializer.Deserialize<List<Movie>>(json, options);
-
-            listBox1.Items.Clear();
-
-            if (movies == null) return;
-
-            foreach (var m in movies)
-            {
-                listBox1.Items.Add($"{m.title} ({m.release_year}) - {m.rating} | {m.description}");
-            }
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void HomePage_Load(object sender, EventArgs e)
-        {
-
+            //Title Bar 
+            TitleBar titleBar = new TitleBar();
+            titleBar.Dock = DockStyle.Top;
+            this.Controls.Add(titleBar);
         }
 
         private void LoginButton_Click(object sender, EventArgs e)

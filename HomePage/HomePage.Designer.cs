@@ -33,7 +33,6 @@
             RegisterButton = new Button();
             LoginButton = new Button();
             AppName = new Label();
-            listBox1 = new ListBox();
             SuspendLayout();
             // 
             // textBox1
@@ -82,22 +81,12 @@
             AppName.Size = new Size(229, 72);
             AppName.TabIndex = 4;
             AppName.Text = "CinePaw";
-            AppName.Click += label1_Click;
-            // 
-            // listBox1
-            // 
-            listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(145, 102);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(120, 94);
-            listBox1.TabIndex = 5;
             // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1230, 591);
-            Controls.Add(listBox1);
+            ClientSize = new Size(1000, 500);
             Controls.Add(AppName);
             Controls.Add(LoginButton);
             Controls.Add(RegisterButton);
@@ -106,7 +95,6 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "HomePage";
             Text = "HomePage";
-            Load += HomePage_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -118,6 +106,5 @@
         private Button RegisterButton;
         private Button LoginButton;
         private Label AppName;
-        private ListBox listBox1;
     }
 }

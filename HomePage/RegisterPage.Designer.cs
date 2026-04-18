@@ -112,7 +112,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1000, 500);
             Controls.Add(checkBox1);
             Controls.Add(RegisterButton);
             Controls.Add(EmailTextBox);
@@ -121,6 +121,7 @@
             Controls.Add(PasswordLabel);
             Controls.Add(EmailLabel);
             Controls.Add(DisplayNameLabel);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "RegisterPage";
             Text = "RegisterPage";
             Load += RegisterPage_Load;

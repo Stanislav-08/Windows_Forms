@@ -47,7 +47,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem2, toolStripMenuItem3 });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(181, 450);
+            menuStrip1.Size = new Size(181, 500);
             menuStrip1.TabIndex = 1;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -132,13 +132,14 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImageLayout = ImageLayout.Center;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1000, 500);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(menuStrip1);
+            FormBorderStyle = FormBorderStyle.None;
             MainMenuStrip = menuStrip1;
             Name = "PersonPage";
             Text = "PersonPage";

@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace App
+namespace App.Services
 {
     public class AuthenticationService
     {
@@ -21,12 +21,14 @@ namespace App
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", apiKey);
         }
+
+        // Registration method
         public async Task<bool> Register(string email, string password, string displayName)
         {
             var payload = new
             {
-                email = email,
-                password = password,
+                email,
+                password,
                 data = new
                 {
                     display_name = displayName
@@ -52,12 +54,13 @@ namespace App
             return response.IsSuccessStatusCode;
         }
 
+        //Login method
         public async Task<string?> Login(string email, string password)
         {
             var payload = new
             {
-                email = email,
-                password = password
+                email,
+                password
             };
 
             var content = new StringContent(
@@ -83,6 +86,7 @@ namespace App
             return doc.RootElement.GetProperty("access_token").GetString();
         }
 
+        //Data extraction method
         public async Task<List<T>> GetDatabase<T>(string database)
         {
             var response = await client.GetAsync($"{supabaseUrl}/rest/v1/{database}?select=*");
