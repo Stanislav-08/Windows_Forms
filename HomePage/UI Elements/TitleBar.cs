@@ -24,7 +24,7 @@ namespace App
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.FindForm().Close();
+            Environment.Exit(Environment.ExitCode);
         }
         private void minimizeButton_Click(object sender, EventArgs e)
         {

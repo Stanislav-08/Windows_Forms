@@ -10,6 +10,6 @@ namespace App.Databases
     {
         public string name { get; set; }
         public string info { get; set; }
-        public string url { get; set; }
+        public string profile_path { get; set; }
     }
 }

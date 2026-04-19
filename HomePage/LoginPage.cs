@@ -22,20 +22,30 @@ namespace App
         {
             string email = EmailTextBox.Text.Trim();
             string password = PasswordTextBox.Text.Trim();
-
             var token = await authService.Login(email, password);
 
-            MessageBox.Show("TOKEN: " + (token ?? "NULL"));
+            //MessageBox.Show("TOKEN: " + (token ?? "NULL"));
 
             if (token != null)
             {
-                MainPage mainPage = new MainPage();
-                mainPage.Show();
-                Hide();
+                MessageBox.Show("Login successful!");
+
+                //Admin check
+                if (email=="admin@gmail.com")
+                {
+                    AdminMainPage adminMainPage = new AdminMainPage();
+                    adminMainPage.Show();
+                }
+                else
+                {
+                    MainPage mainPage = new MainPage();
+                    mainPage.Show();
+                }
+                this.Hide();
             }
             else
             {
-                MessageBox.Show("LOGIN FAILED");
+                MessageBox.Show("Login failed.");
             }
         }
 

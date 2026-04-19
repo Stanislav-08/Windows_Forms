@@ -30,35 +30,48 @@
         {
             flowLayoutPanel1 = new FlowLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
+            panel1 = new Panel();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(37, 54);
+            flowLayoutPanel1.Location = new Point(50, 18);
             flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(723, 130);
+            flowLayoutPanel1.Size = new Size(900, 300);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel2
             // 
-            flowLayoutPanel2.Location = new Point(37, 284);
+            flowLayoutPanel2.Location = new Point(50, 368);
             flowLayoutPanel2.Margin = new Padding(0);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(723, 130);
+            flowLayoutPanel2.Size = new Size(900, 300);
             flowLayoutPanel2.TabIndex = 1;
+            // 
+            // panel1
+            // 
+            panel1.AutoScroll = true;
+            panel1.Controls.Add(flowLayoutPanel1);
+            panel1.Controls.Add(flowLayoutPanel2);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 32);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1000, 468);
+            panel1.TabIndex = 2;
             // 
             // MainPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1000, 500);
-            Controls.Add(flowLayoutPanel2);
-            Controls.Add(flowLayoutPanel1);
+            Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "MainPage";
             Text = "MainPage";
             Load += MainPage_Load;
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -66,5 +79,6 @@
 
         private FlowLayoutPanel flowLayoutPanel1;
         private FlowLayoutPanel flowLayoutPanel2;
+        private Panel panel1;
     }
 }

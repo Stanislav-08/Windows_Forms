@@ -14,11 +14,13 @@ namespace App
     {
         private readonly string supabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
 
+        static AuthenticationService db = new AuthenticationService();
+        static HttpClient http = new HttpClient();
+
         public MainPage()
         {
             InitializeComponent();
 
-            // Title Bar
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             this.Controls.Add(titleBar);
@@ -27,6 +29,7 @@ namespace App
             ConfigureFlow(flowLayoutPanel2);
         }
 
+        // Configure shared FlowLayoutPanel behavior
         private void ConfigureFlow(FlowLayoutPanel flow)
         {
             flow.FlowDirection = FlowDirection.LeftToRight;
@@ -38,14 +41,11 @@ namespace App
 
         private async void MainPage_Load(object sender, EventArgs e)
         {
-
             await LoadMovies();
             await LoadPeople();
         }
 
-        static AuthenticationService db = new AuthenticationService();
-        static HttpClient http = new HttpClient();
-
+        // Load movies from database and build UI cards
         private async Task LoadMovies()
         {
             var movies = await db.GetDatabase<Movie>("movies") ?? new List<Movie>();
@@ -56,12 +56,16 @@ namespace App
             foreach (var movie in movies)
             {
                 string imageUrl =
-                    $"{supabaseUrl}/storage/v1/object/public/movies/{movie.poster_path}";
+                    $"{supabaseUrl}/storage/v1/object/public/pictures/{movie.poster_path}";
 
                 var card = CreateCard(movie.title, imageUrl);
 
                 card.Tag = movie;
-                card.Click += MovieCard_Click;
+
+                // click anywhere on card triggers navigation
+                card.Click += (s, e) => MovieCard_Click(card);
+
+                AttachClickRecursive(card, () => MovieCard_Click(card));
 
                 flowLayoutPanel1.Controls.Add(card);
             }
@@ -69,6 +73,7 @@ namespace App
             flowLayoutPanel1.ResumeLayout();
         }
 
+        // Load people from database and build UI cards
         private async Task LoadPeople()
         {
             var people = await db.GetDatabase<Person>("people") ?? new List<Person>();
@@ -78,10 +83,17 @@ namespace App
 
             foreach (var person in people)
             {
-                var card = CreateCard(person.name, person.url);
+                string imageUrl =
+                    $"{supabaseUrl}/storage/v1/object/public/pictures/{person.profile_path}";
+
+                var card = CreateCard(person.name, imageUrl);
 
                 card.Tag = person;
-                card.Click += PersonCard_Click;
+
+                // click anywhere on card triggers navigation
+                card.Click += (s, e) => PersonCard_Click(card);
+
+                AttachClickRecursive(card, () => PersonCard_Click(card));
 
                 flowLayoutPanel2.Controls.Add(card);
             }
@@ -89,18 +101,19 @@ namespace App
             flowLayoutPanel2.ResumeLayout();
         }
 
+        // Create reusable UI card (image + label)
         private Panel CreateCard(string text, string imageUrl)
         {
             Panel card = new Panel();
             card.Width = 150;
-            card.Height = 100;
+            card.Height = 283;
             card.BackColor = Color.FromArgb(30, 30, 30);
             card.Cursor = Cursors.Hand;
-            card.Margin = new Padding(10);
+            card.Margin = new Padding(5, 0, 5, 0);
 
             PictureBox poster = new PictureBox();
             poster.Dock = DockStyle.Top;
-            poster.Height = 70;
+            poster.Height = 225;
             poster.SizeMode = PictureBoxSizeMode.StretchImage;
 
             LoadImageAsync(poster, imageUrl);
@@ -117,6 +130,16 @@ namespace App
             return card;
         }
 
+        // Recursively attach click event to all child controls
+        private void AttachClickRecursive(Control ctrl, Action onClick)
+        {
+            ctrl.Click += (s, e) => onClick();
+
+            foreach (Control child in ctrl.Controls)
+                AttachClickRecursive(child, onClick);
+        }
+
+        // Async image loading from URL
         private async void LoadImageAsync(PictureBox box, string url)
         {
             try
@@ -132,31 +155,30 @@ namespace App
             }
         }
 
-        private Panel GetCard(Control ctrl)
+        // Movie navigation handler
+        private void MovieCard_Click(Panel card)
         {
-            while (ctrl != null && ctrl is not Panel)
-                ctrl = ctrl.Parent;
-
-            return ctrl as Panel;
-        }
-
-        private void MovieCard_Click(object sender, EventArgs e)
-        {
-            var card = GetCard(sender as Control);
             if (card?.Tag is not Movie movie) return;
 
             string imageUrl =
-                $"{supabaseUrl}/storage/v1/object/public/movies/{movie.poster_path}";
+                $"{supabaseUrl}/storage/v1/object/public/pictures/{movie.poster_path}";
 
-            new MoviePage(movie.title, movie.description, imageUrl).ShowDialog();
+            MoviePage moviePage = new MoviePage(movie.title, movie.description, imageUrl);
+            moviePage.ShowDialog();
+            this.Hide();
         }
 
-        private void PersonCard_Click(object sender, EventArgs e)
+        // Person navigation handler
+        private void PersonCard_Click(Panel card)
         {
-            var card = GetCard(sender as Control);
             if (card?.Tag is not Person person) return;
 
-            new PersonPage(person.name, person.info, person.url).ShowDialog();
+            string imageUrl =
+                $"{supabaseUrl}/storage/v1/object/public/pictures/{person.profile_path}";
+
+            PersonPage personPage = new PersonPage(person.name, person.info, imageUrl);
+            personPage.ShowDialog();
+            this.Hide();
         }
     }
 }

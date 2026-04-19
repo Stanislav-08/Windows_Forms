@@ -36,6 +36,8 @@
             EmailTextBox = new TextBox();
             RegisterButton = new Button();
             checkBox1 = new CheckBox();
+            DateOfBirthDateTimePicker = new DateTimePicker();
+            DateOfBirthLabel = new Label();
             SuspendLayout();
             // 
             // DisplayNameLabel
@@ -76,7 +78,6 @@
             // 
             PasswordTextBox.Location = new Point(409, 259);
             PasswordTextBox.Name = "PasswordTextBox";
-            PasswordTextBox.PasswordChar = '*';
             PasswordTextBox.Size = new Size(100, 23);
             PasswordTextBox.TabIndex = 4;
             // 
@@ -89,7 +90,7 @@
             // 
             // RegisterButton
             // 
-            RegisterButton.Location = new Point(419, 336);
+            RegisterButton.Location = new Point(424, 414);
             RegisterButton.Name = "RegisterButton";
             RegisterButton.Size = new Size(75, 23);
             RegisterButton.TabIndex = 6;
@@ -108,11 +109,29 @@
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
+            // DateOfBirthDateTimePicker
+            // 
+            DateOfBirthDateTimePicker.Location = new Point(361, 338);
+            DateOfBirthDateTimePicker.Name = "DateOfBirthDateTimePicker";
+            DateOfBirthDateTimePicker.Size = new Size(200, 23);
+            DateOfBirthDateTimePicker.TabIndex = 8;
+            // 
+            // DateOfBirthLabel
+            // 
+            DateOfBirthLabel.AutoSize = true;
+            DateOfBirthLabel.Location = new Point(436, 318);
+            DateOfBirthLabel.Name = "DateOfBirthLabel";
+            DateOfBirthLabel.Size = new Size(73, 15);
+            DateOfBirthLabel.TabIndex = 9;
+            DateOfBirthLabel.Text = "Date of birth";
+            // 
             // RegisterPage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1000, 500);
+            Controls.Add(DateOfBirthLabel);
+            Controls.Add(DateOfBirthDateTimePicker);
             Controls.Add(checkBox1);
             Controls.Add(RegisterButton);
             Controls.Add(EmailTextBox);
@@ -139,5 +158,7 @@
         private TextBox EmailTextBox;
         private Button RegisterButton;
         private CheckBox checkBox1;
+        private DateTimePicker DateOfBirthDateTimePicker;
+        private Label DateOfBirthLabel;
     }
 }
