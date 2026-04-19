@@ -31,8 +31,9 @@ namespace HomePage
             string email = EmailTextBox.Text;
             string password = PasswordTextBox.Text;
             string displayName = DisplayNameTextBox.Text;
+            string dateOfBirth = DateOfBirthDateTimePicker.Value.ToString("yyyy-MM-dd");
 
-            var success = await authService.Register(email, password, displayName);
+            var success = await authService.Register(email, password, displayName, dateOfBirth);
 
             if (success)
             {

@@ -23,7 +23,7 @@ namespace App.Services
         }
 
         // Registration method
-        public async Task<bool> Register(string email, string password, string displayName)
+        public async Task<bool> Register(string email, string password, string displayName, string dateOfBirth)
         {
             var payload = new
             {
@@ -31,7 +31,8 @@ namespace App.Services
                 password,
                 data = new
                 {
-                    display_name = displayName
+                    display_name = displayName,
+                    date_of_birth = dateOfBirth
                 }
             };
 
