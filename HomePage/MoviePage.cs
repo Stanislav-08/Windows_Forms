@@ -21,5 +21,30 @@ namespace App
             titleBar.Dock = DockStyle.Top;
             this.Controls.Add(titleBar);
         }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+            //tochka razdelqshta label 1-2-3
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
