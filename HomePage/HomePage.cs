@@ -15,6 +15,7 @@ namespace HomePage
         {
             InitializeComponent();
             ///ULETO BESHE TUK
+            ///siskooo
             //Title Bar 
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
