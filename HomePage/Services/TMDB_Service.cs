@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,8 +15,8 @@ namespace App.Services
         private static readonly HttpClient client = new HttpClient();
 
         private readonly string supabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
-        private readonly string apiKey = "YOUR_API_KEY";
-        private readonly string tmdbKey = "YOUR_TMDB_KEY";
+        private readonly string apiKey = "sb_publishable_xFOf5KlGK5vMTPLz1cdH6Q_Q14a5n5f";
+        private readonly string tmdbKey = "682693c99aa733b5c721b59c841f9748";
 
         public TMDB_Service()
         {
@@ -23,20 +24,12 @@ namespace App.Services
             client.DefaultRequestHeaders.Add("apikey", apiKey);
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", apiKey);
-            client.DefaultRequestHeaders.Add("Prefer", "return=minimal");
         }
 
         public async Task SyncAll()
         {
-            // MessageBox.Show("SYNCALL START");
-
             await SyncMovies();
-
-            // MessageBox.Show("SYNC MOVIES DONE");
-
             await SyncPeople();
-
-            // MessageBox.Show("SYNC PEOPLE DONE");
         }
 
         // ===================== MOVIES =====================
@@ -52,26 +45,26 @@ namespace App.Services
 
                 try
                 {
-                    var bytes = await DownloadImage(m.poster_path);
+                    var details = await GetMovieDetails(m.id);
+                    var director = await GetDirector(m.id);
 
+                    var bytes = await DownloadImage(m.poster_path);
                     await UploadImage(bytes, $"movies/{m.id}.jpg");
 
-                    await InsertMovie(m);
+                    await InsertMovie(m, details, director);
 
-                    await Task.Delay(50);
+                    await Task.Delay(100); // avoid rate limits
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // MessageBox.Show(ex.Message);
+                    // ignore broken entries
                 }
             }
         }
 
         private async Task<List<TmdbMovie>> GetTmdbMovies()
         {
-            string url =
-                $"https://api.themoviedb.org/3/movie/popular?api_key={tmdbKey}";
-
+            string url = $"https://api.themoviedb.org/3/movie/popular?api_key={tmdbKey}";
             var response = await client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
@@ -83,47 +76,56 @@ namespace App.Services
             return data?.results ?? new List<TmdbMovie>();
         }
 
+        private async Task<TmdbMovieDetails> GetMovieDetails(int id)
+        {
+            string url = $"https://api.themoviedb.org/3/movie/{id}?api_key={tmdbKey}";
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<TmdbMovieDetails>(json);
+        }
+
+        private async Task<string> GetDirector(int id)
+        {
+            string url = $"https://api.themoviedb.org/3/movie/{id}/credits?api_key={tmdbKey}";
+            var json = await client.GetStringAsync(url);
+
+            var data = JsonSerializer.Deserialize<TmdbCredits>(json);
+            var director = data?.crew?.FirstOrDefault(c => c.job == "Director");
+
+            return director?.name ?? "";
+        }
+
         // ===================== PEOPLE =====================
 
         public async Task SyncPeople()
         {
-            // MessageBox.Show("SYNC PEOPLE START");
-
             var people = await GetTmdbPeople();
-
-            // MessageBox.Show("PEOPLE COUNT: " + people.Count);
 
             foreach (var p in people)
             {
-                // MessageBox.Show("PERSON: " + p.name);
-
                 if (string.IsNullOrEmpty(p.profile_path))
                     continue;
 
                 try
                 {
                     var bytes = await DownloadImage(p.profile_path);
-
                     await UploadImage(bytes, $"people/{p.id}.jpg");
 
                     await InsertPerson(p);
 
-                    await Task.Delay(50);
+                    await Task.Delay(100);
                 }
-                catch (Exception ex)
-                {
-                    // MessageBox.Show("PERSON ERROR: " + ex.Message);
-                }
+                catch { }
             }
-
-            // MessageBox.Show("SYNC PEOPLE END");
         }
 
         private async Task<List<TmdbPerson>> GetTmdbPeople()
         {
-            string url =
-                $"https://api.themoviedb.org/3/person/popular?api_key={tmdbKey}";
-
+            string url = $"https://api.themoviedb.org/3/person/popular?api_key={tmdbKey}";
             var response = await client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
@@ -146,8 +148,7 @@ namespace App.Services
         private async Task UploadImage(byte[] bytes, string fullPath)
         {
             var content = new ByteArrayContent(bytes);
-            content.Headers.ContentType =
-                new MediaTypeHeaderValue("image/jpeg");
+            content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
             var request = new HttpRequestMessage(
                 HttpMethod.Put,
@@ -159,27 +160,42 @@ namespace App.Services
             request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
             var response = await client.SendAsync(request);
-            var result = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
                 MessageBox.Show("UPLOAD FAILED: " + result);
+            }
         }
 
         // ===================== DATABASE =====================
 
-        private async Task InsertMovie(TmdbMovie m)
+        private async Task InsertMovie(TmdbMovie m, TmdbMovieDetails d, string director)
         {
             var payload = new
             {
                 title = m.title,
                 poster_path = $"movies/{m.id}.jpg",
-                description = "",
-                rating = 0,
-                release_year = 0,
-                duration_minutes = 0
+                description = d?.overview ?? "",
+                rating = d?.vote_average ?? 0,
+                release_year = ExtractYear(d?.release_date),
+                duration_minutes = d?.runtime ?? 0,
+                status = d?.status,
+                adult = d?.adult,
+                genres = d?.genres?.Select(g => g.name).ToList(),
+                director = director,
+                imdb_id = d?.imdb_id
             };
 
             await InsertRow("movies", payload);
+        }
+
+        private int ExtractYear(string date)
+        {
+            if (string.IsNullOrEmpty(date)) return 0;
+            if (DateTime.TryParse(date, out var dt))
+                return dt.Year;
+            return 0;
         }
 
         private async Task InsertPerson(TmdbPerson p)
@@ -212,10 +228,12 @@ namespace App.Services
             request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
             var response = await client.SendAsync(request);
-            var result = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
                 MessageBox.Show(table + " INSERT FAILED: " + result);
+            }
         }
     }
 
@@ -236,6 +254,34 @@ namespace App.Services
         public int id { get; set; }
         public string title { get; set; }
         public string poster_path { get; set; }
+    }
+
+    public class TmdbMovieDetails
+    {
+        public string overview { get; set; }
+        public bool adult { get; set; }
+        public string status { get; set; }
+        public int runtime { get; set; }
+        public double vote_average { get; set; }
+        public string release_date { get; set; }
+        public string imdb_id { get; set; }
+        public List<Genre> genres { get; set; }
+    }
+
+    public class Genre
+    {
+        public string name { get; set; }
+    }
+
+    public class TmdbCredits
+    {
+        public List<Crew> crew { get; set; }
+    }
+
+    public class Crew
+    {
+        public string job { get; set; }
+        public string name { get; set; }
     }
 
     public class TmdbPerson

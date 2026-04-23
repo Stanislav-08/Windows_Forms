@@ -41,6 +41,9 @@ namespace App
 
         private async void MainPage_Load(object sender, EventArgs e)
         {
+            //FULL SYNC
+            //TMDB_Service tMDB_Service = new TMDB_Service();
+            //tMDB_Service.SyncAll();
             await LoadMovies();
             await LoadPeople();
         }
@@ -164,7 +167,7 @@ namespace App
                 $"{supabaseUrl}/storage/v1/object/public/pictures/{movie.poster_path}";
 
             MoviePage moviePage = new MoviePage(movie.title, movie.description, imageUrl);
-            moviePage.ShowDialog();
+            moviePage.Show();
             this.Hide();
         }
 
@@ -177,7 +180,7 @@ namespace App
                 $"{supabaseUrl}/storage/v1/object/public/pictures/{person.profile_path}";
 
             PersonPage personPage = new PersonPage(person.name, person.info, imageUrl);
-            personPage.ShowDialog();
+            personPage.Show();
             this.Hide();
         }
     }
