@@ -59,9 +59,10 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(25, 25);
+            pictureBox1.Location = new Point(22, 19);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(250, 350);
+            pictureBox1.Size = new Size(219, 262);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -70,45 +71,43 @@
             label1.AutoSize = true;
             label1.Font = new Font("Sitka Text", 9F, FontStyle.Bold);
             label1.ForeColor = SystemColors.ButtonHighlight;
-            label1.Location = new Point(321, 67);
+            label1.Location = new Point(281, 50);
             label1.Name = "label1";
-            label1.Size = new Size(43, 21);
+            label1.Size = new Size(34, 18);
             label1.TabIndex = 1;
             label1.Text = "Year";
-            label1.Click += label1_Click;
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Sitka Text", 9F, FontStyle.Bold);
             label2.ForeColor = SystemColors.ButtonHighlight;
-            label2.Location = new Point(424, 67);
+            label2.Location = new Point(371, 50);
             label2.Name = "label2";
-            label2.Size = new Size(47, 21);
+            label2.Size = new Size(37, 18);
             label2.TabIndex = 2;
             label2.Text = "Time";
-            label2.Click += label2_Click;
             // 
             // label3
             // 
-            label3.Font = new Font("Sitka Subheading Semibold", 20F);
+            label3.AutoSize = true;
+            label3.Font = new Font("Microsoft Sans Serif", 20F);
             label3.ForeColor = SystemColors.ButtonHighlight;
-            label3.Location = new Point(294, 9);
+            label3.Location = new Point(257, 7);
             label3.Name = "label3";
-            label3.Size = new Size(202, 47);
+            label3.Size = new Size(89, 31);
             label3.TabIndex = 3;
             label3.Text = "TITLE";
             label3.TextAlign = ContentAlignment.MiddleCenter;
-            label3.Click += label3_Click;
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Arial", 9F);
             label4.ForeColor = SystemColors.ButtonHighlight;
-            label4.Location = new Point(384, 71);
+            label4.Location = new Point(336, 53);
             label4.Name = "label4";
-            label4.Size = new Size(17, 17);
+            label4.Size = new Size(14, 15);
             label4.TabIndex = 4;
             label4.Text = "●";
             label4.Click += label4_Click;
@@ -118,9 +117,9 @@
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             label5.ForeColor = SystemColors.ButtonHighlight;
-            label5.Location = new Point(25, 421);
+            label5.Location = new Point(22, 316);
             label5.Name = "label5";
-            label5.Size = new Size(73, 20);
+            label5.Size = new Size(56, 15);
             label5.TabIndex = 5;
             label5.Text = "Top Cast ";
             // 
@@ -133,55 +132,58 @@
             button1.FlatAppearance.MouseOverBackColor = Color.Transparent;
             button1.FlatStyle = FlatStyle.Popup;
             button1.ForeColor = Color.Transparent;
-            button1.Location = new Point(33, 52);
+            button1.Location = new Point(29, 39);
             button1.Margin = new Padding(0);
             button1.Name = "button1";
-            button1.Padding = new Padding(0, 0, 6, 7);
-            button1.Size = new Size(322, 43);
+            button1.Padding = new Padding(0, 0, 5, 5);
+            button1.Size = new Size(282, 32);
             button1.TabIndex = 6;
             button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
             // 
             // label6
             // 
-            label6.AutoSize = true;
             label6.Font = new Font("Sitka Text", 9F, FontStyle.Bold);
             label6.ForeColor = SystemColors.ButtonHighlight;
-            label6.Location = new Point(294, 226);
+            label6.Location = new Point(257, 170);
             label6.Name = "label6";
-            label6.Size = new Size(33, 21);
+            label6.Size = new Size(250, 138);
             label6.TabIndex = 7;
             label6.Text = "bio";
+            label6.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pictureBox2
             // 
-            pictureBox2.Location = new Point(25, 444);
+            pictureBox2.Location = new Point(22, 333);
+            pictureBox2.Margin = new Padding(3, 2, 3, 2);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(163, 230);
+            pictureBox2.Size = new Size(143, 172);
             pictureBox2.TabIndex = 8;
             pictureBox2.TabStop = false;
             // 
             // pictureBox3
             // 
-            pictureBox3.Location = new Point(204, 444);
+            pictureBox3.Location = new Point(178, 333);
+            pictureBox3.Margin = new Padding(3, 2, 3, 2);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(163, 230);
+            pictureBox3.Size = new Size(143, 172);
             pictureBox3.TabIndex = 9;
             pictureBox3.TabStop = false;
             // 
             // pictureBox4
             // 
-            pictureBox4.Location = new Point(563, 445);
+            pictureBox4.Location = new Point(493, 334);
+            pictureBox4.Margin = new Padding(3, 2, 3, 2);
             pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(163, 230);
+            pictureBox4.Size = new Size(143, 172);
             pictureBox4.TabIndex = 11;
             pictureBox4.TabStop = false;
             // 
             // pictureBox5
             // 
-            pictureBox5.Location = new Point(384, 445);
+            pictureBox5.Location = new Point(336, 334);
+            pictureBox5.Margin = new Padding(3, 2, 3, 2);
             pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(163, 230);
+            pictureBox5.Size = new Size(143, 172);
             pictureBox5.TabIndex = 10;
             pictureBox5.TabStop = false;
             // 
@@ -190,9 +192,9 @@
             label7.AutoSize = true;
             label7.Font = new Font("Sitka Text", 9F, FontStyle.Bold);
             label7.ForeColor = SystemColors.ButtonHighlight;
-            label7.Location = new Point(294, 178);
+            label7.Location = new Point(257, 134);
             label7.Name = "label7";
-            label7.Size = new Size(52, 21);
+            label7.Size = new Size(41, 18);
             label7.TabIndex = 12;
             label7.Text = "genre";
             // 
@@ -201,9 +203,9 @@
             label8.AutoSize = true;
             label8.Font = new Font("Sitka Text", 9F, FontStyle.Bold);
             label8.ForeColor = SystemColors.ButtonHighlight;
-            label8.Location = new Point(294, 125);
+            label8.Location = new Point(257, 94);
             label8.Name = "label8";
-            label8.Size = new Size(63, 21);
+            label8.Size = new Size(51, 18);
             label8.TabIndex = 13;
             label8.Text = "creator";
             // 
@@ -212,9 +214,10 @@
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
             panel1.Controls.Add(button2);
-            panel1.Location = new Point(617, 38);
+            panel1.Location = new Point(540, 28);
+            panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(388, 107);
+            panel1.Size = new Size(340, 80);
             panel1.TabIndex = 14;
             // 
             // button4
@@ -226,11 +229,11 @@
             button4.FlatAppearance.MouseOverBackColor = Color.Transparent;
             button4.FlatStyle = FlatStyle.Popup;
             button4.ForeColor = Color.Transparent;
-            button4.Location = new Point(264, 14);
+            button4.Location = new Point(231, 10);
             button4.Margin = new Padding(0);
             button4.Name = "button4";
-            button4.Padding = new Padding(0, 0, 6, 7);
-            button4.Size = new Size(100, 78);
+            button4.Padding = new Padding(0, 0, 5, 5);
+            button4.Size = new Size(88, 58);
             button4.TabIndex = 18;
             button4.UseVisualStyleBackColor = false;
             // 
@@ -243,11 +246,11 @@
             button3.FlatAppearance.MouseOverBackColor = Color.Transparent;
             button3.FlatStyle = FlatStyle.Popup;
             button3.ForeColor = Color.Transparent;
-            button3.Location = new Point(142, 14);
+            button3.Location = new Point(124, 10);
             button3.Margin = new Padding(0);
             button3.Name = "button3";
-            button3.Padding = new Padding(0, 0, 6, 7);
-            button3.Size = new Size(100, 78);
+            button3.Padding = new Padding(0, 0, 5, 5);
+            button3.Size = new Size(88, 58);
             button3.TabIndex = 17;
             button3.UseVisualStyleBackColor = false;
             // 
@@ -260,11 +263,11 @@
             button2.FlatAppearance.MouseOverBackColor = Color.Transparent;
             button2.FlatStyle = FlatStyle.Popup;
             button2.ForeColor = Color.Transparent;
-            button2.Location = new Point(19, 14);
+            button2.Location = new Point(17, 10);
             button2.Margin = new Padding(0);
             button2.Name = "button2";
-            button2.Padding = new Padding(0, 0, 6, 7);
-            button2.Size = new Size(100, 78);
+            button2.Padding = new Padding(0, 0, 5, 5);
+            button2.Size = new Size(88, 58);
             button2.TabIndex = 16;
             button2.UseVisualStyleBackColor = false;
             // 
@@ -272,29 +275,29 @@
             // 
             panel2.Controls.Add(label9);
             panel2.Controls.Add(button1);
-            panel2.Location = new Point(617, 151);
+            panel2.Location = new Point(540, 113);
+            panel2.Margin = new Padding(3, 2, 3, 2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(388, 107);
+            panel2.Size = new Size(340, 80);
             panel2.TabIndex = 15;
             // 
             // label9
             // 
-            label9.Font = new Font("Sitka Subheading Semibold", 12F);
+            label9.Font = new Font("Microsoft Sans Serif", 12F);
             label9.ForeColor = SystemColors.ButtonHighlight;
-            label9.Location = new Point(94, 11);
+            label9.Location = new Point(82, 8);
             label9.Name = "label9";
-            label9.Size = new Size(202, 31);
+            label9.Size = new Size(177, 23);
             label9.TabIndex = 7;
             label9.Text = "RATING";
             label9.TextAlign = ContentAlignment.MiddleCenter;
-            label9.Click += label9_Click;
             // 
             // MoviePage
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(63, 63, 63);
-            ClientSize = new Size(1040, 999);
+            BackColor = Color.FromArgb(36, 38, 69);
+            ClientSize = new Size(910, 749);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(label8);
@@ -311,10 +314,8 @@
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 4, 3, 4);
             Name = "MoviePage";
             Text = "MoviePage";
-            Load += MoviePage_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
