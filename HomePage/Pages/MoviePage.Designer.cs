@@ -34,7 +34,6 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
-            button1 = new Button();
             label6 = new Label();
             pictureBox2 = new PictureBox();
             pictureBox3 = new PictureBox();
@@ -47,6 +46,11 @@
             button3 = new Button();
             button2 = new Button();
             panel2 = new Panel();
+            button8 = new Button();
+            button7 = new Button();
+            button6 = new Button();
+            button1 = new Button();
+            button5 = new Button();
             label9 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
@@ -62,7 +66,8 @@
             pictureBox1.Location = new Point(22, 19);
             pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(219, 262);
+            pictureBox1.Size = new Size(200, 300);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -117,28 +122,11 @@
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             label5.ForeColor = SystemColors.ButtonHighlight;
-            label5.Location = new Point(22, 316);
+            label5.Location = new Point(26, 354);
             label5.Name = "label5";
             label5.Size = new Size(56, 15);
             label5.TabIndex = 5;
             label5.Text = "Top Cast ";
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.Transparent;
-            button1.BackgroundImageLayout = ImageLayout.Center;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            button1.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.ForeColor = Color.Transparent;
-            button1.Location = new Point(29, 39);
-            button1.Margin = new Padding(0);
-            button1.Name = "button1";
-            button1.Padding = new Padding(0, 0, 5, 5);
-            button1.Size = new Size(282, 32);
-            button1.TabIndex = 6;
-            button1.UseVisualStyleBackColor = false;
             // 
             // label6
             // 
@@ -153,7 +141,7 @@
             // 
             // pictureBox2
             // 
-            pictureBox2.Location = new Point(22, 333);
+            pictureBox2.Location = new Point(26, 371);
             pictureBox2.Margin = new Padding(3, 2, 3, 2);
             pictureBox2.Name = "pictureBox2";
             pictureBox2.Size = new Size(143, 172);
@@ -162,7 +150,7 @@
             // 
             // pictureBox3
             // 
-            pictureBox3.Location = new Point(178, 333);
+            pictureBox3.Location = new Point(182, 371);
             pictureBox3.Margin = new Padding(3, 2, 3, 2);
             pictureBox3.Name = "pictureBox3";
             pictureBox3.Size = new Size(143, 172);
@@ -171,7 +159,7 @@
             // 
             // pictureBox4
             // 
-            pictureBox4.Location = new Point(493, 334);
+            pictureBox4.Location = new Point(497, 372);
             pictureBox4.Margin = new Padding(3, 2, 3, 2);
             pictureBox4.Name = "pictureBox4";
             pictureBox4.Size = new Size(143, 172);
@@ -180,7 +168,7 @@
             // 
             // pictureBox5
             // 
-            pictureBox5.Location = new Point(336, 334);
+            pictureBox5.Location = new Point(340, 372);
             pictureBox5.Margin = new Padding(3, 2, 3, 2);
             pictureBox5.Name = "pictureBox5";
             pictureBox5.Size = new Size(143, 172);
@@ -273,19 +261,113 @@
             // 
             // panel2
             // 
-            panel2.Controls.Add(label9);
+            panel2.Controls.Add(button8);
+            panel2.Controls.Add(button7);
+            panel2.Controls.Add(button6);
             panel2.Controls.Add(button1);
+            panel2.Controls.Add(button5);
+            panel2.Controls.Add(label9);
             panel2.Location = new Point(540, 113);
             panel2.Margin = new Padding(3, 2, 3, 2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(340, 80);
+            panel2.Size = new Size(360, 80);
             panel2.TabIndex = 15;
+            // 
+            // button8
+            // 
+            button8.BackColor = Color.Transparent;
+            button8.BackgroundImageLayout = ImageLayout.Center;
+            button8.FlatAppearance.BorderSize = 0;
+            button8.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button8.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button8.FlatStyle = FlatStyle.Flat;
+            button8.ForeColor = Color.Transparent;
+            button8.Location = new Point(292, 25);
+            button8.Margin = new Padding(0);
+            button8.Name = "button8";
+            button8.Padding = new Padding(0, 0, 5, 5);
+            button8.Size = new Size(48, 48);
+            button8.TabIndex = 20;
+            button8.UseVisualStyleBackColor = false;
+            button8.Click += button8_Click;
+            // 
+            // button7
+            // 
+            button7.BackColor = Color.Transparent;
+            button7.BackgroundImageLayout = ImageLayout.Center;
+            button7.FlatAppearance.BorderSize = 0;
+            button7.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button7.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button7.FlatStyle = FlatStyle.Flat;
+            button7.ForeColor = Color.Transparent;
+            button7.Location = new Point(224, 25);
+            button7.Margin = new Padding(0);
+            button7.Name = "button7";
+            button7.Padding = new Padding(0, 0, 5, 5);
+            button7.Size = new Size(48, 48);
+            button7.TabIndex = 19;
+            button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
+            // 
+            // button6
+            // 
+            button6.BackColor = Color.Transparent;
+            button6.BackgroundImageLayout = ImageLayout.Center;
+            button6.FlatAppearance.BorderSize = 0;
+            button6.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button6.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button6.FlatStyle = FlatStyle.Flat;
+            button6.ForeColor = Color.Transparent;
+            button6.Location = new Point(156, 25);
+            button6.Margin = new Padding(0);
+            button6.Name = "button6";
+            button6.Padding = new Padding(0, 0, 5, 5);
+            button6.Size = new Size(48, 48);
+            button6.TabIndex = 18;
+            button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
+            // 
+            // button1
+            // 
+            button1.BackColor = Color.Transparent;
+            button1.BackgroundImageLayout = ImageLayout.Center;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button1.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.ForeColor = Color.Transparent;
+            button1.Location = new Point(88, 25);
+            button1.Margin = new Padding(0);
+            button1.Name = "button1";
+            button1.Padding = new Padding(0, 0, 5, 5);
+            button1.Size = new Size(48, 48);
+            button1.TabIndex = 17;
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.Transparent;
+            button5.BackgroundImageLayout = ImageLayout.Center;
+            button5.FlatAppearance.BorderSize = 0;
+            button5.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button5.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.ForeColor = Color.Transparent;
+            button5.Location = new Point(20, 25);
+            button5.Margin = new Padding(0);
+            button5.Name = "button5";
+            button5.Padding = new Padding(0, 0, 5, 5);
+            button5.Size = new Size(48, 48);
+            button5.TabIndex = 16;
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
             // 
             // label9
             // 
             label9.Font = new Font("Microsoft Sans Serif", 12F);
             label9.ForeColor = SystemColors.ButtonHighlight;
-            label9.Location = new Point(82, 8);
+            label9.Location = new Point(92, 2);
             label9.Name = "label9";
             label9.Size = new Size(177, 23);
             label9.TabIndex = 7;
@@ -335,7 +417,6 @@
         private Label label3;
         private Label label4;
         private Label label5;
-        private Button button1;
         private Label label6;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
@@ -349,5 +430,10 @@
         private Button button3;
         private Button button2;
         private Label label9;
+        private Button button1;
+        private Button button5;
+        private Button button8;
+        private Button button7;
+        private Button button6;
     }
 }
