@@ -38,6 +38,7 @@ namespace App
             button6.Image = Icons.Get("outlined_star");
             button7.Image = Icons.Get("outlined_star");
             button8.Image = Icons.Get("outlined_star");
+            button2.Image = Icons.Get("favourite");
 
         }
         private async Task LoadImageAsync(PictureBox pictureBox, string url)

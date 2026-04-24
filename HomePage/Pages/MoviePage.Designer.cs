@@ -44,7 +44,6 @@
             panel1 = new Panel();
             button4 = new Button();
             button3 = new Button();
-            button2 = new Button();
             panel2 = new Panel();
             button8 = new Button();
             button7 = new Button();
@@ -52,6 +51,7 @@
             button1 = new Button();
             button5 = new Button();
             label9 = new Label();
+            button2 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -199,9 +199,9 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(button2);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
-            panel1.Controls.Add(button2);
             panel1.Location = new Point(540, 28);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
@@ -241,23 +241,6 @@
             button3.Size = new Size(88, 58);
             button3.TabIndex = 17;
             button3.UseVisualStyleBackColor = false;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.Transparent;
-            button2.BackgroundImageLayout = ImageLayout.Center;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            button2.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            button2.FlatStyle = FlatStyle.Popup;
-            button2.ForeColor = Color.Transparent;
-            button2.Location = new Point(17, 10);
-            button2.Margin = new Padding(0);
-            button2.Name = "button2";
-            button2.Padding = new Padding(0, 0, 5, 5);
-            button2.Size = new Size(88, 58);
-            button2.TabIndex = 16;
-            button2.UseVisualStyleBackColor = false;
             // 
             // panel2
             // 
@@ -374,6 +357,23 @@
             label9.Text = "RATING";
             label9.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // button2
+            // 
+            button2.BackColor = Color.Transparent;
+            button2.BackgroundImageLayout = ImageLayout.Center;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button2.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.ForeColor = Color.Transparent;
+            button2.Location = new Point(41, 15);
+            button2.Margin = new Padding(0);
+            button2.Name = "button2";
+            button2.Padding = new Padding(0, 0, 5, 5);
+            button2.Size = new Size(48, 48);
+            button2.TabIndex = 21;
+            button2.UseVisualStyleBackColor = false;
+            // 
             // MoviePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -428,12 +428,12 @@
         private Panel panel2;
         private Button button4;
         private Button button3;
-        private Button button2;
         private Label label9;
         private Button button1;
         private Button button5;
         private Button button8;
         private Button button7;
         private Button button6;
+        private Button button2;
     }
 }
