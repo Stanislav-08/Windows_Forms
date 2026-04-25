@@ -1,4 +1,4 @@
-﻿namespace HomePage
+﻿namespace App.Pages
 {
     partial class RegisterPage
     {

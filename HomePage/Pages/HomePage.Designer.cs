@@ -1,4 +1,4 @@
-﻿namespace HomePage
+﻿namespace App.Pages
 {
     partial class HomePage
     {
@@ -60,24 +60,26 @@
             // 
             // RegisterButton
             // 
+            RegisterButton.BackColor = SystemColors.ButtonHighlight;
             RegisterButton.Font = new Font("Arial", 10.2F, FontStyle.Bold);
             RegisterButton.Location = new Point(338, 299);
             RegisterButton.Name = "RegisterButton";
             RegisterButton.Size = new Size(125, 23);
             RegisterButton.TabIndex = 2;
             RegisterButton.Text = "Register";
-            RegisterButton.UseVisualStyleBackColor = true;
+            RegisterButton.UseVisualStyleBackColor = false;
             RegisterButton.Click += RegisterButton_Click;
             // 
             // LoginButton
             // 
+            LoginButton.BackColor = SystemColors.ButtonHighlight;
             LoginButton.Font = new Font("Arial", 10.2F, FontStyle.Bold);
             LoginButton.Location = new Point(469, 299);
             LoginButton.Name = "LoginButton";
             LoginButton.Size = new Size(127, 23);
             LoginButton.TabIndex = 3;
             LoginButton.Text = "Login";
-            LoginButton.UseVisualStyleBackColor = true;
+            LoginButton.UseVisualStyleBackColor = false;
             LoginButton.Click += LoginButton_Click;
             // 
             // pictureBox1
