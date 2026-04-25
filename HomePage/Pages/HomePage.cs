@@ -7,16 +7,14 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows.Forms;
 
-namespace HomePage
+namespace App.Pages
 {
     public partial class HomePage : Form
     {
         public HomePage()
         {
             InitializeComponent();
-            ///ULETO BESHE TUK
-            ///siskooo
-            //Title Bar 
+
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             this.Controls.Add(titleBar);

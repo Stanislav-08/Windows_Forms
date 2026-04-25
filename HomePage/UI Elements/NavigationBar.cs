@@ -1,4 +1,5 @@
 ﻿using App.Services;
+using HomePage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,12 +34,14 @@ namespace App.UI_Elements
 
         private async void LogOutLabel_Click(object sender, EventArgs e)
         {
+            var result = MessageBox.Show("Are you sure you want to log out?", "Log Out", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (Session.AccessToken != null)
                 await _supabase.Logout(Session.AccessToken);
 
+            if (result != DialogResult.Yes) return;
             Session.AccessToken = null;
 
-            new LoginPage().Show();
+           // new HomePage.Show();
             FindForm()?.Hide();
         }
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
 
-namespace HomePage
+namespace App.Pages
 {
     public partial class RegisterPage : Form
     {
