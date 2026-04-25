@@ -28,35 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomePage));
             textBox1 = new TextBox();
             button1 = new Button();
             RegisterButton = new Button();
             LoginButton = new Button();
-            AppName = new Label();
+            pictureBox1 = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(329, 214);
+            textBox1.Location = new Point(202, 231);
+            textBox1.Margin = new Padding(3, 4, 3, 4);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(532, 23);
+            textBox1.Size = new Size(607, 27);
             textBox1.TabIndex = 0;
             // 
             // button1
             // 
-            button1.Location = new Point(867, 214);
+            button1.BackColor = SystemColors.ButtonHighlight;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button1.ForeColor = SystemColors.ActiveCaptionText;
+            button1.Location = new Point(826, 227);
+            button1.Margin = new Padding(3, 4, 3, 4);
             button1.Name = "button1";
-            button1.Size = new Size(75, 23);
+            button1.Size = new Size(86, 31);
             button1.TabIndex = 1;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
+            button1.Text = "Search";
+            button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
             // RegisterButton
             // 
-            RegisterButton.Location = new Point(243, 388);
+            RegisterButton.Font = new Font("Arial", 10.2F, FontStyle.Bold);
+            RegisterButton.Location = new Point(399, 266);
+            RegisterButton.Margin = new Padding(3, 4, 3, 4);
             RegisterButton.Name = "RegisterButton";
-            RegisterButton.Size = new Size(75, 23);
+            RegisterButton.Size = new Size(143, 31);
             RegisterButton.TabIndex = 2;
             RegisterButton.Text = "Register";
             RegisterButton.UseVisualStyleBackColor = true;
@@ -64,38 +74,44 @@
             // 
             // LoginButton
             // 
-            LoginButton.Location = new Point(904, 388);
+            LoginButton.Font = new Font("Arial", 10.2F, FontStyle.Bold);
+            LoginButton.Location = new Point(548, 266);
+            LoginButton.Margin = new Padding(3, 4, 3, 4);
             LoginButton.Name = "LoginButton";
-            LoginButton.Size = new Size(75, 23);
+            LoginButton.Size = new Size(145, 31);
             LoginButton.TabIndex = 3;
             LoginButton.Text = "Login";
             LoginButton.UseVisualStyleBackColor = true;
             LoginButton.Click += LoginButton_Click;
             // 
-            // AppName
+            // pictureBox1
             // 
-            AppName.AutoSize = true;
-            AppName.Font = new Font("Segoe UI", 40F);
-            AppName.Location = new Point(516, 84);
-            AppName.Name = "AppName";
-            AppName.Size = new Size(229, 72);
-            AppName.TabIndex = 4;
-            AppName.Text = "CinePaw";
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(105, 28);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(912, 192);
+            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox1.TabIndex = 4;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click_1;
             // 
             // HomePage
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 500);
-            Controls.Add(AppName);
+            BackColor = Color.FromArgb(36, 38, 69);
+            ClientSize = new Size(1135, 419);
+            Controls.Add(pictureBox1);
             Controls.Add(LoginButton);
             Controls.Add(RegisterButton);
             Controls.Add(button1);
             Controls.Add(textBox1);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "HomePage";
             Text = "HomePage";
             Load += HomePage_Load;
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -106,6 +122,6 @@
         private Button button1;
         private Button RegisterButton;
         private Button LoginButton;
-        private Label AppName;
+        private PictureBox pictureBox1;
     }
 }

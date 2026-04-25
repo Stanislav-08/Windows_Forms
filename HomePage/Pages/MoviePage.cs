@@ -90,12 +90,17 @@ namespace App
 
         private void button7_Click(object sender, EventArgs e)
         {
-            state4=ChangeRating(button7, state4);
+            state4 = ChangeRating(button7, state4);
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            state5=ChangeRating(button8, state5);
+            state5 = ChangeRating(button8, state5);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+///hhghf
         }
     }
 }
