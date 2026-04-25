@@ -40,7 +40,6 @@ namespace App
             button7.Image = Icons.Get("outlined_star");
             button8.Image = Icons.Get("outlined_star");
             button2.Image = Icons.Get("outlined_favourite", 60);
-
         }
         private async Task LoadImageAsync(PictureBox pictureBox, string url)
         {

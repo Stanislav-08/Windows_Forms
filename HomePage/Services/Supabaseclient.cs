@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
 
 namespace App.Services
 {
@@ -53,6 +55,15 @@ namespace App.Services
             {
                 return null;
             }
+        }
+
+        public async Task Logout(string accessToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{Url}/auth/v1/logout");
+            request.Headers.TryAddWithoutValidation("apikey", ApiKey);
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
+
+            await Http.SendAsync(request);
         }
 
         // ===================================================================

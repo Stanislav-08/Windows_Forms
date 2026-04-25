@@ -17,9 +17,9 @@ namespace App
         public TitleBar()
         {
             InitializeComponent();
-            closeButton.Image = Icons.Get("close_dark", 16);
-            minimizeButton.Image = Icons.Get("minimize_dark", 16);
-            maximizeButton.Image = Icons.Get("maximize_dark", 16);
+            closeButton.Image = Icons.Get("close", 16);
+            minimizeButton.Image = Icons.Get("minimize", 16);
+            maximizeButton.Image = Icons.Get("maximize", 16);
         }
 
         private void closeButton_Click(object sender, EventArgs e)

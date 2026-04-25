@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Collections.Specialized.BitVector32;
 
 namespace App.UI_Elements
 {
@@ -30,9 +31,15 @@ namespace App.UI_Elements
         private void ProfileButton_Click(object sender, EventArgs e) => NavigateTo("profile");
         private void ProfileLabel_Click(object sender, EventArgs e) => NavigateTo("profile");
 
-        private void LogOutLabel_Click(object sender, EventArgs e)
+        private async void LogOutLabel_Click(object sender, EventArgs e)
         {
-            // TODO: clear session / token and navigate to login
+            if (Session.AccessToken != null)
+                await _supabase.Logout(Session.AccessToken);
+
+            Session.AccessToken = null;
+
+            new LoginPage().Show();
+            FindForm()?.Hide();
         }
 
         private void NavigateTo(string page)
