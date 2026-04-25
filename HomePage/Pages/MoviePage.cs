@@ -111,5 +111,25 @@ namespace App
                 button2.Image = Icons.Get("outlined_favourite", 60);
             }
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MoviePage_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
