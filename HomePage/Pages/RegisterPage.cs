@@ -19,7 +19,12 @@ namespace HomePage
         public RegisterPage()
         {
             InitializeComponent();
+
             AuthService=new AuthenticationService(new SupabaseClient());
+
+            TitleBar titleBar = new TitleBar();
+            titleBar.Dock = DockStyle.Top;
+            Controls.Add(titleBar);
         }
 
         private void RegisterPage_Load(object sender, EventArgs e)
