@@ -197,7 +197,6 @@
             // 
             // panel1
             // 
-            panel1.BorderStyle = BorderStyle.FixedSingle;
             panel1.Controls.Add(button2);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
@@ -260,7 +259,6 @@
             // 
             // panel2
             // 
-            panel2.BorderStyle = BorderStyle.FixedSingle;
             panel2.Controls.Add(button8);
             panel2.Controls.Add(button7);
             panel2.Controls.Add(button6);

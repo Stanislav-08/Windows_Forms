@@ -25,5 +25,10 @@ namespace App
             navigationBar.Dock = DockStyle.Left;
             Controls.Add(navigationBar);
         }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
