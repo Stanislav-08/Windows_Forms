@@ -28,8 +28,8 @@ namespace App
             titleBar.Dock = DockStyle.Top;
             this.Controls.Add(titleBar);
             LoadImageAsync(pictureBox1, posterPath);
-            label1.Text = $"Release year:\n{releaseYear.ToString()}";
-            label2.Text = durationMinutes.ToString();
+            label1.Text = $"{releaseYear.ToString()}";
+            label2.Text = $"{durationMinutes.ToString()} min";
             label3.Text = title;
             label6.Text = description;
             label7.Text = $"Genres: {genres}";
