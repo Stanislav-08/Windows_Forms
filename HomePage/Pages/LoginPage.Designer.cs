@@ -94,13 +94,15 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            BackColor = Color.FromArgb(36, 38, 69);
+            ClientSize = new Size(1000, 500);
             Controls.Add(checkBox1);
             Controls.Add(LoginButton);
             Controls.Add(EmailTextBox);
             Controls.Add(PasswordTextBox);
             Controls.Add(PasswordLabel);
             Controls.Add(EmailLabel);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "LoginPage";
             Text = "LoginPage";
             Load += LoginPage_Load;
