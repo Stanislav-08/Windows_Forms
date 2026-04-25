@@ -78,9 +78,9 @@
             // 
             label1.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label1.ForeColor = SystemColors.ButtonHighlight;
-            label1.Location = new Point(277, 66);
+            label1.Location = new Point(278, 65);
             label1.Name = "label1";
-            label1.Size = new Size(111, 28);
+            label1.Size = new Size(69, 28);
             label1.TabIndex = 1;
             label1.Text = "Year";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -90,7 +90,7 @@
             // 
             label2.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label2.ForeColor = SystemColors.ButtonHighlight;
-            label2.Location = new Point(418, 66);
+            label2.Location = new Point(361, 65);
             label2.Name = "label2";
             label2.Size = new Size(103, 28);
             label2.TabIndex = 2;
@@ -99,7 +99,7 @@
             // 
             // label3
             // 
-            label3.Font = new Font("Arial", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.Font = new Font("Arial", 19.8000011F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             label3.ForeColor = SystemColors.ButtonHighlight;
             label3.Location = new Point(30, 9);
             label3.Name = "label3";
@@ -110,9 +110,9 @@
             // 
             // label4
             // 
-            label4.Font = new Font("Arial", 10.2F, FontStyle.Bold);
+            label4.Font = new Font("Arial", 7.8F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label4.ForeColor = SystemColors.ButtonHighlight;
-            label4.Location = new Point(393, 69);
+            label4.Location = new Point(336, 67);
             label4.Name = "label4";
             label4.Size = new Size(19, 23);
             label4.TabIndex = 4;
@@ -175,24 +175,24 @@
             // 
             // label7
             // 
-            label7.Font = new Font("Arial", 10.2F, FontStyle.Bold);
+            label7.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label7.ForeColor = SystemColors.ButtonHighlight;
-            label7.Location = new Point(277, 149);
+            label7.Location = new Point(278, 173);
             label7.Name = "label7";
-            label7.Size = new Size(196, 28);
+            label7.Size = new Size(319, 28);
             label7.TabIndex = 12;
-            label7.Text = "Genre";
+            label7.Text = "...";
             label7.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label8
             // 
-            label8.Font = new Font("Arial", 10.2F, FontStyle.Bold);
+            label8.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label8.ForeColor = SystemColors.ButtonHighlight;
-            label8.Location = new Point(276, 97);
+            label8.Location = new Point(277, 121);
             label8.Name = "label8";
             label8.Size = new Size(197, 28);
             label8.TabIndex = 13;
-            label8.Text = "Creator";
+            label8.Text = "...";
             label8.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // panel1
@@ -201,7 +201,7 @@
             panel1.Controls.Add(button2);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
-            panel1.Location = new Point(617, 134);
+            panel1.Location = new Point(617, 180);
             panel1.Name = "panel1";
             panel1.Size = new Size(411, 107);
             panel1.TabIndex = 14;
@@ -268,7 +268,7 @@
             panel2.Controls.Add(button5);
             panel2.Controls.Add(label9);
             panel2.ForeColor = SystemColors.ControlText;
-            panel2.Location = new Point(617, 20);
+            panel2.Location = new Point(617, 66);
             panel2.Name = "panel2";
             panel2.Size = new Size(411, 107);
             panel2.TabIndex = 15;
@@ -377,25 +377,25 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label10.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label10.ForeColor = SystemColors.ButtonHighlight;
-            label10.Location = new Point(277, 125);
+            label10.Location = new Point(277, 102);
             label10.Name = "label10";
-            label10.Size = new Size(62, 20);
+            label10.Size = new Size(69, 19);
             label10.TabIndex = 16;
-            label10.Text = "label10";
+            label10.Text = "Creator";
             label10.Click += label10_Click;
             // 
             // label11
             // 
             label11.AutoSize = true;
-            label11.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label11.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label11.ForeColor = SystemColors.ButtonHighlight;
-            label11.Location = new Point(277, 177);
+            label11.Location = new Point(275, 154);
             label11.Name = "label11";
-            label11.Size = new Size(61, 20);
+            label11.Size = new Size(57, 19);
             label11.TabIndex = 17;
-            label11.Text = "label11";
+            label11.Text = "Genre";
             // 
             // label12
             // 
