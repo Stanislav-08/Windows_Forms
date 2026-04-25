@@ -125,7 +125,7 @@ namespace App
             {
                 Width = 150,
                 Height = 283,
-                BackColor = Color.FromArgb(30, 30, 30),
+                BackColor = Color.FromArgb(36, 38, 69),
                 Cursor = Cursors.Hand,
                 Margin = new Padding(5, 0, 5, 0)
             };
@@ -136,21 +136,40 @@ namespace App
                 Height = 225,
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
+            poster.Paint += Poster_Paint;
 
             _ = LoadImageAsync(poster, imageUrl);
 
             var label = new Label
             {
                 Text = text,
-                Dock = DockStyle.Bottom,
                 ForeColor = Color.White,
+                BackColor = Color.FromArgb(180, 0, 0, 0), // dark transparent box
+                AutoSize = false,
+                Height = 40,
+                Dock = DockStyle.Bottom,
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            card.Controls.Add(label);
+            // IMPORTANT: add label inside poster (overlay)
+            poster.Controls.Add(label);
+
+            // only add poster to card
             card.Controls.Add(poster);
 
             return card;
+        }
+        private void Poster_Paint(object sender, PaintEventArgs e)
+        {
+            var pb = sender as PictureBox;
+            if (pb == null) return;
+
+            var rect = new Rectangle(0, 0, pb.Width - 1, pb.Height - 1);
+
+            using (var pen = new Pen(Color.FromArgb(255, 27, 29, 54), 5)) // color + thickness
+            {
+                e.Graphics.DrawRectangle(pen, rect);
+            }
         }
 
         private static void AttachClickRecursive(Control ctrl, Action onClick)
@@ -203,6 +222,16 @@ namespace App
             string imageUrl = $"{SupabaseUrl}/storage/v1/object/public/pictures/{person.profile_path}";
             new PersonPage(person.name, person.info, imageUrl).Show();
             Hide();
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

@@ -36,19 +36,21 @@
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(50, 18);
+            flowLayoutPanel1.Location = new Point(57, 24);
             flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(900, 300);
+            flowLayoutPanel1.Size = new Size(1029, 263);
             flowLayoutPanel1.TabIndex = 0;
+            flowLayoutPanel1.Paint += flowLayoutPanel1_Paint;
             // 
             // flowLayoutPanel2
             // 
-            flowLayoutPanel2.Location = new Point(50, 368);
+            flowLayoutPanel2.Location = new Point(57, 316);
             flowLayoutPanel2.Margin = new Padding(0);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(900, 300);
+            flowLayoutPanel2.Size = new Size(1029, 283);
             flowLayoutPanel2.TabIndex = 1;
+            flowLayoutPanel2.Paint += flowLayoutPanel2_Paint;
             // 
             // panel1
             // 
@@ -56,18 +58,21 @@
             panel1.Controls.Add(flowLayoutPanel1);
             panel1.Controls.Add(flowLayoutPanel2);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 32);
+            panel1.Location = new Point(0, 43);
+            panel1.Margin = new Padding(3, 4, 3, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1000, 468);
+            panel1.Size = new Size(1143, 624);
             panel1.TabIndex = 2;
             // 
             // MainPage
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 500);
+            BackColor = Color.FromArgb(36, 38, 69);
+            ClientSize = new Size(1143, 667);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "MainPage";
             Text = "MainPage";
             Load += MainPage_Load;
