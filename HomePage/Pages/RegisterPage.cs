@@ -14,11 +14,12 @@ namespace HomePage
 {
     public partial class RegisterPage : Form
     {
-        private readonly AuthenticationService authService = new AuthenticationService();
+        private readonly AuthenticationService AuthService;
 
         public RegisterPage()
         {
             InitializeComponent();
+            AuthService=new AuthenticationService(new SupabaseClient());
         }
 
         private void RegisterPage_Load(object sender, EventArgs e)
@@ -33,7 +34,7 @@ namespace HomePage
             string displayName = DisplayNameTextBox.Text;
             string dateOfBirth = DateOfBirthDateTimePicker.Value.ToString("yyyy-MM-dd");
 
-            var success = await authService.Register(email, password, displayName, dateOfBirth);
+            var success = await AuthService.Register(email, password, displayName, dateOfBirth);
 
             if (success)
             {

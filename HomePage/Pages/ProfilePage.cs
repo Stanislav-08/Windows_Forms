@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App.UI_Elements;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,14 @@ namespace App
         public ProfilePage()
         {
             InitializeComponent();
+
+            TitleBar titleBar = new TitleBar();
+            titleBar.Dock = DockStyle.Top;
+            Controls.Add(titleBar);
+
+            NavigationBar navigationBar = new NavigationBar();
+            navigationBar.Dock = DockStyle.Left;
+            Controls.Add(navigationBar);
         }
     }
 }

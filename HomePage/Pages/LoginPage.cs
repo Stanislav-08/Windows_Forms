@@ -11,18 +11,19 @@ namespace App
 {
     public partial class LoginPage : Form
     {
-        private readonly AuthenticationService authService = new AuthenticationService();
+        private readonly AuthenticationService AuthService;
 
         public LoginPage()
         {
             InitializeComponent();
+            AuthService = new AuthenticationService(new SupabaseClient());
         }
 
         private async void LoginButton_Click(object sender, EventArgs e)
         {
             string email = EmailTextBox.Text.Trim();
             string password = PasswordTextBox.Text.Trim();
-            var token = await authService.Login(email, password);
+            var token = await AuthService.Login(email, password);
 
             //MessageBox.Show("TOKEN: " + (token ?? "NULL"));
 

@@ -10,14 +10,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
+using static System.Windows.Forms.AxHost;
 
 namespace App
 {
     public partial class MoviePage : Form
     {
-        private static readonly HttpClient http = AppHttpClient.Instance; // shared client
+        private static readonly HttpClient http = AppHttpClient.Instance;
         private string state1 = "outlined", state2 = "outlined", state3 = "outlined", state4 = "outlined", state5 = "outlined";
-
+        private string stateFavourite = "not favourite";
         public MoviePage(string title, int durationMinutes, double rating, int releaseYear, string description, string posterPath, string status, bool adult, string director, string genres)
         {
             InitializeComponent();
@@ -38,7 +39,7 @@ namespace App
             button6.Image = Icons.Get("outlined_star");
             button7.Image = Icons.Get("outlined_star");
             button8.Image = Icons.Get("outlined_star");
-            button2.Image = Icons.Get("favourite");
+            button2.Image = Icons.Get("outlined_favourite", 60);
 
         }
         private async Task LoadImageAsync(PictureBox pictureBox, string url)
@@ -98,9 +99,18 @@ namespace App
             state5 = ChangeRating(button8, state5);
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-///hhghf
+            if (stateFavourite == "not favourite")
+            {
+                stateFavourite = "favourite";
+                button2.Image = Icons.Get("filled_favourite", 60);
+            }
+            else if (stateFavourite == "favourite")
+            {
+                stateFavourite = "not favourite";
+                button2.Image = Icons.Get("outlined_favourite", 60);
+            }
         }
     }
 }

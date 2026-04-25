@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,16 +10,22 @@ namespace App.Services
 {
     public class TMDB_Service
     {
-        // Use the single shared client — no DefaultRequestHeaders ever touched here
-        private static readonly HttpClient client = AppHttpClient.Instance;
+        private static readonly HttpClient Http = AppHttpClient.Instance;
+        private readonly SupabaseClient Supabase;
 
-        private readonly string supabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
-        private readonly string apiKey = "sb_publishable_xFOf5KlGK5vMTPLz1cdH6Q_Q14a5n5f";
-        private readonly string tmdbKey = "682693c99aa733b5c721b59c841f9748";
+        private const string TmdbBase = "https://api.themoviedb.org/3";
+        private const string TmdbImage = "https://image.tmdb.org/t/p/w500";
+        private readonly string _tmdbKey = "682693c99aa733b5c721b59c841f9748";
 
-        // -------------------------------------------------------------------
-        // Public entry-point — only called on first launch (guard is in MainPage)
-        // -------------------------------------------------------------------
+        public TMDB_Service(SupabaseClient supabase)
+        {
+            Supabase = supabase;
+        }
+
+        // ===================================================================
+        // PUBLIC ENTRY-POINT
+        // ===================================================================
+
         public async Task SyncAll()
         {
             await SyncMovies();
@@ -36,24 +40,21 @@ namespace App.Services
         {
             for (int page = 1; page <= 5; page++)
             {
-                var movies = await GetTmdbMovies(page);
+                var movies = await FetchPopularMovies(page);
                 await Task.Delay(500);
 
                 foreach (var m in movies)
                 {
-                    if (string.IsNullOrEmpty(m.poster_path))
-                        continue;
+                    if (string.IsNullOrEmpty(m.poster_path)) continue;
 
                     try
                     {
-                        var details = await GetMovieDetails(m.id);
-                        var director = await GetDirector(m.id);
+                        var details = await FetchMovieDetails(m.id);
+                        var director = await FetchDirector(m.id);
+                        var imageBytes = await Http.GetByteArrayAsync(TmdbImage + m.poster_path);
 
-                        var bytes = await client.GetByteArrayAsync("https://image.tmdb.org/t/p/w500" + m.poster_path);
-                        await UploadImage(bytes, $"movies/{m.id}.jpg");
-
+                        await Supabase.UploadImage(imageBytes, $"movies/{m.id}.jpg");
                         await InsertMovie(m, details, director);
-
                         await Task.Delay(300);
                     }
                     catch (Exception ex)
@@ -64,40 +65,32 @@ namespace App.Services
             }
         }
 
-        private async Task<List<TmdbMovie>> GetTmdbMovies(int page)
+        private async Task<List<TmdbMovie>> FetchPopularMovies(int page)
         {
-            // TMDB calls need no auth headers — just a plain GET
-            var response = await client.GetAsync(
-                $"https://api.themoviedb.org/3/movie/popular?api_key={tmdbKey}&page={page}"
-            );
-
+            var response = await Http.GetAsync($"{TmdbBase}/movie/popular?api_key={_tmdbKey}&page={page}");
             if (!response.IsSuccessStatusCode) return new List<TmdbMovie>();
 
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TmdbMovieResponse>(json)?.results ?? new List<TmdbMovie>();
         }
 
-        private async Task<TmdbMovieDetails> GetMovieDetails(int id)
+        private async Task<TmdbMovieDetails?> FetchMovieDetails(int id)
         {
-            var response = await client.GetAsync(
-                $"https://api.themoviedb.org/3/movie/{id}?api_key={tmdbKey}"
-            );
-
+            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}?api_key={_tmdbKey}");
             if (!response.IsSuccessStatusCode) return null;
 
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TmdbMovieDetails>(json);
         }
 
-        private async Task<string> GetDirector(int id)
+        private async Task<string> FetchDirector(int id)
         {
-            var json = await client.GetStringAsync($"https://api.themoviedb.org/3/movie/{id}/credits?api_key={tmdbKey}");
-            var data = JsonSerializer.Deserialize<TmdbCredits>(json);
-            var director = data?.crew?.FirstOrDefault(c => c.job == "Director");
-            return director?.name ?? "";
+            var json = await Http.GetStringAsync($"{TmdbBase}/movie/{id}/credits?api_key={_tmdbKey}");
+            var credits = JsonSerializer.Deserialize<TmdbCredits>(json);
+            return credits?.crew?.FirstOrDefault(c => c.job == "Director")?.name ?? "";
         }
 
-        private async Task InsertMovie(TmdbMovie m, TmdbMovieDetails d, string director)
+        private async Task InsertMovie(TmdbMovie m, TmdbMovieDetails? d, string director)
         {
             var payload = new
             {
@@ -109,17 +102,17 @@ namespace App.Services
                 duration_minutes = d?.runtime ?? 0,
                 status = d?.status,
                 adult = d?.adult,
-                director = director,
+                director
             };
 
-            var movieId = await InsertAndReturnId("movies", payload);
+            var movieId = await Supabase.InsertAndReturnId("movies", payload);
 
             if (movieId == null || d?.genres == null) return;
 
             foreach (var g in d.genres)
             {
                 var genreId = await GetOrCreateGenre(g.name);
-                await InsertRow("movie_genres", new { movie_id = movieId.Value, genre_id = genreId });
+                await Supabase.Insert("movie_genres", new { movie_id = movieId.Value, genre_id = genreId });
             }
         }
 
@@ -129,7 +122,7 @@ namespace App.Services
 
         public async Task SyncPeople()
         {
-            var people = await GetTmdbPeople();
+            var people = await FetchPopularPeople();
 
             foreach (var p in people)
             {
@@ -137,9 +130,9 @@ namespace App.Services
 
                 try
                 {
-                    var bytes = await client.GetByteArrayAsync("https://image.tmdb.org/t/p/w500" + p.profile_path);
-                    await UploadImage(bytes, $"people/{p.id}.jpg");
-                    await InsertRow("people", new
+                    var imageBytes = await Http.GetByteArrayAsync(TmdbImage + p.profile_path);
+                    await Supabase.UploadImage(imageBytes, $"people/{p.id}.jpg");
+                    await Supabase.Insert("people", new
                     {
                         name = p.name,
                         profile_path = $"people/{p.id}.jpg",
@@ -154,12 +147,9 @@ namespace App.Services
             }
         }
 
-        private async Task<List<TmdbPerson>> GetTmdbPeople()
+        private async Task<List<TmdbPerson>> FetchPopularPeople()
         {
-            var response = await client.GetAsync(
-                $"https://api.themoviedb.org/3/person/popular?api_key={tmdbKey}"
-            );
-
+            var response = await Http.GetAsync($"{TmdbBase}/person/popular?api_key={_tmdbKey}");
             if (!response.IsSuccessStatusCode) return new List<TmdbPerson>();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -167,110 +157,27 @@ namespace App.Services
         }
 
         // ===================================================================
-        // STORAGE
+        // GENRE HELPER
         // ===================================================================
 
-        private async Task UploadImage(byte[] bytes, string fullPath)
-        {
-            var content = new ByteArrayContent(bytes);
-            content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-            var request = new HttpRequestMessage(
-                HttpMethod.Put,
-                $"{supabaseUrl}/storage/v1/object/pictures/{fullPath}"
-            );
-            request.Content = content;
-            AddSupabaseHeaders(request);
-
-            var response = await client.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-                MessageBox.Show("UPLOAD FAILED: " + await response.Content.ReadAsStringAsync());
-        }
-
-        // ===================================================================
-        // SUPABASE HELPERS
-        // ===================================================================
-
-        // Insert a row and return the new id, or null on failure
-        private async Task<long?> InsertAndReturnId(string table, object payload)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{supabaseUrl}/rest/v1/{table}");
-            request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-            AddSupabaseHeaders(request, prefer: "return=representation");
-
-            var response = await client.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                MessageBox.Show($"{table} INSERT FAILED: " + json);
-                return null;
-            }
-
-            try
-            {
-                using var doc = JsonDocument.Parse(json);
-                var root = doc.RootElement;
-                if (root.ValueKind == JsonValueKind.Array && root.GetArrayLength() > 0)
-                    return root[0].GetProperty("id").GetInt64();
-            }
-            catch { }
-
-            return null;
-        }
-
-        // Insert a row without needing the returned id
-        private async Task InsertRow(string table, object payload)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{supabaseUrl}/rest/v1/{table}");
-            request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-            AddSupabaseHeaders(request);
-
-            var response = await client.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-                MessageBox.Show($"{table} INSERT FAILED: " + await response.Content.ReadAsStringAsync());
-        }
-
-        // Get existing genre id, or create it and return the new id
         private async Task<long> GetOrCreateGenre(string name)
         {
             var encoded = Uri.EscapeDataString(name);
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{supabaseUrl}/rest/v1/genres?name=eq.{encoded}&select=id");
-            AddSupabaseHeaders(request);
+            var existing = await Supabase.Query<GenreRow>("genres", $"name=eq.{encoded}");
 
-            var response = await client.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            if (existing.Count > 0) return existing[0].id;
 
-            try
-            {
-                var doc = JsonDocument.Parse(json);
-                if (doc.RootElement.ValueKind == JsonValueKind.Array && doc.RootElement.GetArrayLength() > 0)
-                    return doc.RootElement[0].GetProperty("id").GetInt64();
-            }
-            catch { }
-
-            // Not found — insert it
-            var newId = await InsertAndReturnId("genres", new { name });
-            return newId ?? 0;
+            return await Supabase.InsertAndReturnId("genres", new { name }) ?? 0;
         }
 
-        // Stamp Supabase auth headers onto a request — always per-request, never global
-        private void AddSupabaseHeaders(HttpRequestMessage request, string prefer = null)
-        {
-            request.Headers.TryAddWithoutValidation("apikey", apiKey);
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {apiKey}");
+        // ===================================================================
+        // UTILS
+        // ===================================================================
 
-            if (!string.IsNullOrEmpty(prefer))
-                request.Headers.TryAddWithoutValidation("Prefer", prefer);
-        }
-
-        private int ExtractYear(string date)
+        private static int ExtractYear(string? date)
         {
             if (string.IsNullOrEmpty(date)) return 0;
-            if (DateTime.TryParse(date, out var dt)) return dt.Year;
-            return 0;
+            return DateTime.TryParse(date, out var dt) ? dt.Year : 0;
         }
     }
 
@@ -278,8 +185,19 @@ namespace App.Services
     // MODELS
     // ===================================================================
 
-    public class TmdbMovieResponse { public List<TmdbMovie> results { get; set; } }
-    public class TmdbPersonResponse { public List<TmdbPerson> results { get; set; } }
+    file class GenreRow 
+    {
+        public long id { get; set; } 
+    }
+
+    public class TmdbMovieResponse 
+    {
+        public List<TmdbMovie> results { get; set; }
+    }
+    public class TmdbPersonResponse 
+    {
+        public List<TmdbPerson> results { get; set; }
+    }
 
     public class TmdbMovie
     {
@@ -292,18 +210,25 @@ namespace App.Services
     {
         public string overview { get; set; }
         public bool adult { get; set; }
-        public string status { get; set; }
+        public string? status { get; set; }
         public int runtime { get; set; }
         public double vote_average { get; set; }
-        public string release_date { get; set; }
+        public string? release_date { get; set; }
         public List<Genre> genres { get; set; }
     }
 
-    public class Genre { public string name { get; set; } }
+    public class Genre {
+        public string name { get; set; }
+    }
 
-    public class TmdbCredits { public List<Crew> crew { get; set; } }
-
-    public class Crew { public string job { get; set; } public string name { get; set; } }
+    public class TmdbCredits {
+        public List<Crew> crew { get; set; }
+    }
+    public class Crew
+    {
+        public string job { get; set; }
+        public string name { get; set; }
+    }
 
     public class TmdbPerson
     {
