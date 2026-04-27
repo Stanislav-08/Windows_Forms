@@ -15,7 +15,7 @@ namespace App.Services
 
         private const string TmdbBase = "https://api.themoviedb.org/3";
         private const string TmdbImage = "https://image.tmdb.org/t/p/w500";
-        private readonly string _tmdbKey = "682693c99aa733b5c721b59c841f9748";
+        private readonly string TmdbKey = "682693c99aa733b5c721b59c841f9748";
 
         public TMDB_Service(SupabaseClient supabase)
         {
@@ -54,7 +54,12 @@ namespace App.Services
                         var imageBytes = await Http.GetByteArrayAsync(TmdbImage + m.poster_path);
 
                         await Supabase.UploadImage(imageBytes, $"movies/{m.id}.jpg");
-                        await InsertMovie(m, details, director);
+
+                        var movieId = await InsertMovie(m, details, director);
+
+                        if (movieId != null)
+                            await SyncCredits(m.id, movieId.Value);
+
                         await Task.Delay(300);
                     }
                     catch (Exception ex)
@@ -67,7 +72,7 @@ namespace App.Services
 
         private async Task<List<TmdbMovie>> FetchPopularMovies(int page)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/movie/popular?api_key={_tmdbKey}&page={page}");
+            var response = await Http.GetAsync($"{TmdbBase}/movie/popular?api_key={TmdbKey}&page={page}");
             if (!response.IsSuccessStatusCode) return new List<TmdbMovie>();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -76,7 +81,7 @@ namespace App.Services
 
         private async Task<TmdbMovieDetails?> FetchMovieDetails(int id)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}?api_key={_tmdbKey}");
+            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}?api_key={TmdbKey}");
             if (!response.IsSuccessStatusCode) return null;
 
             var json = await response.Content.ReadAsStringAsync();
@@ -85,12 +90,12 @@ namespace App.Services
 
         private async Task<string> FetchDirector(int id)
         {
-            var json = await Http.GetStringAsync($"{TmdbBase}/movie/{id}/credits?api_key={_tmdbKey}");
+            var json = await Http.GetStringAsync($"{TmdbBase}/movie/{id}/credits?api_key={TmdbKey}");
             var credits = JsonSerializer.Deserialize<TmdbCredits>(json);
             return credits?.crew?.FirstOrDefault(c => c.job == "Director")?.name ?? "";
         }
 
-        private async Task InsertMovie(TmdbMovie m, TmdbMovieDetails? d, string director)
+        private async Task<long?> InsertMovie(TmdbMovie m, TmdbMovieDetails? d, string director)
         {
             var payload = new
             {
@@ -107,13 +112,69 @@ namespace App.Services
 
             var movieId = await Supabase.InsertAndReturnId("movies", payload);
 
-            if (movieId == null || d?.genres == null) return;
+            if (movieId == null || d?.genres == null) return movieId;
 
             foreach (var g in d.genres)
             {
                 var genreId = await GetOrCreateGenre(g.name);
                 await Supabase.Insert("movie_genres", new { movie_id = movieId.Value, genre_id = genreId });
             }
+
+            return movieId;
+        }
+
+        // ===================================================================
+        // CREDITS
+        // ===================================================================
+
+        private async Task SyncCredits(int tmdbMovieId, long supabaseMovieId)
+        {
+            var json = await Http.GetStringAsync($"{TmdbBase}/movie/{tmdbMovieId}/credits?api_key={TmdbKey}");
+            var credits = JsonSerializer.Deserialize<TmdbCredits>(json);
+
+            foreach (var actor in credits?.cast?.Take(10) ?? Enumerable.Empty<TmdbCast>())
+            {
+                var personId = await GetOrCreatePerson(actor.id, actor.name, actor.profile_path);
+                if (personId != null)
+                    await Supabase.Insert("moviePeople", new
+                    {
+                        movie_id = supabaseMovieId,
+                        person_id = personId.Value,
+                        role = "Actor"
+                    });
+            }
+
+            var keyRoles = new[] { "Director", "Writer", "Screenplay" };
+            foreach (var crew in credits?.crew?.Where(c => keyRoles.Contains(c.job)) ?? Enumerable.Empty<Crew>())
+            {
+                var personId = await GetOrCreatePerson(crew.id, crew.name, crew.profile_path);
+                if (personId != null)
+                    await Supabase.Insert("moviePeople", new
+                    {
+                        movie_id = supabaseMovieId,
+                        person_id = personId.Value,
+                        role = crew.job
+                    });
+            }
+        }
+
+        private async Task<long?> GetOrCreatePerson(int tmdbId, string name, string? profilePath)
+        {
+            var existing = await Supabase.Query<PersonRow>("people", $"name=eq.{Uri.EscapeDataString(name)}");
+            if (existing.Count > 0) return existing[0].id;
+
+            if (!string.IsNullOrEmpty(profilePath))
+            {
+                var bytes = await Http.GetByteArrayAsync(TmdbImage + profilePath);
+                await Supabase.UploadImage(bytes, $"people/{tmdbId}.jpg");
+            }
+
+            return await Supabase.InsertAndReturnId("people", new
+            {
+                name,
+                profile_path = string.IsNullOrEmpty(profilePath) ? "" : $"people/{tmdbId}.jpg",
+                info = ""
+            });
         }
 
         // ===================================================================
@@ -149,7 +210,7 @@ namespace App.Services
 
         private async Task<List<TmdbPerson>> FetchPopularPeople()
         {
-            var response = await Http.GetAsync($"{TmdbBase}/person/popular?api_key={_tmdbKey}");
+            var response = await Http.GetAsync($"{TmdbBase}/person/popular?api_key={TmdbKey}");
             if (!response.IsSuccessStatusCode) return new List<TmdbPerson>();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -185,55 +246,57 @@ namespace App.Services
     // MODELS
     // ===================================================================
 
-    file class GenreRow 
-    {
-        public long id { get; set; } 
-    }
+    file class GenreRow { public long id { get; set; } }
+    file class PersonRow { public long id { get; set; } }
 
-    public class TmdbMovieResponse 
-    {
-        public List<TmdbMovie> results { get; set; }
-    }
-    public class TmdbPersonResponse 
-    {
-        public List<TmdbPerson> results { get; set; }
-    }
+    public class TmdbMovieResponse { public List<TmdbMovie> results { get; set; } = new(); }
+    public class TmdbPersonResponse { public List<TmdbPerson> results { get; set; } = new(); }
 
     public class TmdbMovie
     {
         public int id { get; set; }
-        public string title { get; set; }
-        public string poster_path { get; set; }
+        public string title { get; set; } = "";
+        public string poster_path { get; set; } = "";
     }
 
     public class TmdbMovieDetails
     {
-        public string overview { get; set; }
+        public string overview { get; set; } = "";
         public bool adult { get; set; }
         public string? status { get; set; }
         public int runtime { get; set; }
         public double vote_average { get; set; }
         public string? release_date { get; set; }
-        public List<Genre> genres { get; set; }
+        public List<Genre> genres { get; set; } = new();
     }
 
-    public class Genre {
-        public string name { get; set; }
+    public class Genre { public string name { get; set; } = ""; }
+
+    public class TmdbCredits
+    {
+        public List<TmdbCast> cast { get; set; } = new();
+        public List<Crew> crew { get; set; } = new();
     }
 
-    public class TmdbCredits {
-        public List<Crew> crew { get; set; }
+    public class TmdbCast
+    {
+        public int id { get; set; }
+        public string name { get; set; } = "";
+        public string? profile_path { get; set; }
     }
+
     public class Crew
     {
-        public string job { get; set; }
-        public string name { get; set; }
+        public int id { get; set; }
+        public string job { get; set; } = "";
+        public string name { get; set; } = "";
+        public string? profile_path { get; set; }
     }
 
     public class TmdbPerson
     {
         public int id { get; set; }
-        public string name { get; set; }
-        public string profile_path { get; set; }
+        public string name { get; set; } = "";
+        public string profile_path { get; set; } = "";
     }
 }

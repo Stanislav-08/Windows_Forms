@@ -46,38 +46,35 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Form load — sync only if Supabase is empty, then load UI
+        // Form load
         // -------------------------------------------------------------------
         private async void MainPage_Load(object sender, EventArgs e)
         {
-            bool moviesExist = await DatabaseHasRows("movies");
-
-            if (!moviesExist)
-                await Tmdb.SyncAll();
-
+            await Tmdb.SyncAll();
             await LoadMovies();
             await LoadPeople();
         }
 
-        private static async Task<bool> DatabaseHasRows(string table)
+        private async Task<bool> DatabaseHasRows(string table)
         {
             try
             {
-                var rows = await Supabase.GetAll<object>(table);
+                var rows = await Supabase.GetAll<System.Text.Json.JsonElement>(table);
                 return rows != null && rows.Count > 0;
             }
             catch
             {
-                return false; // assume empty → trigger sync
+                return false;
             }
         }
 
         // -------------------------------------------------------------------
-        // Load movies from Supabase and build UI cards
+        // Load movies
         // -------------------------------------------------------------------
         private async Task LoadMovies()
         {
-            var movies = await Supabase.GetAll<Movie>("movies?select=*,movie_genres(genres(name))");
+            var movies = await Supabase.GetAll<Models>("movies?select=*,movie_genres(genres(name))");
+            MessageBox.Show($"Movies count: {movies.Count}");
 
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
@@ -95,7 +92,7 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Load people from Supabase and build UI cards
+        // Load people
         // -------------------------------------------------------------------
         private async Task LoadPeople()
         {
@@ -137,39 +134,33 @@ namespace App
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
             poster.Paint += Poster_Paint;
-
             _ = LoadImageAsync(poster, imageUrl);
 
             var label = new Label
             {
                 Text = text,
                 ForeColor = Color.White,
-                BackColor = Color.FromArgb(180, 0, 0, 0), // dark transparent box
+                BackColor = Color.FromArgb(180, 0, 0, 0),
                 AutoSize = false,
                 Height = 40,
                 Dock = DockStyle.Bottom,
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // IMPORTANT: add label inside poster (overlay)
             poster.Controls.Add(label);
-
-            // only add poster to card
             card.Controls.Add(poster);
 
             return card;
         }
+
         private void Poster_Paint(object sender, PaintEventArgs e)
         {
             var pb = sender as PictureBox;
             if (pb == null) return;
 
             var rect = new Rectangle(0, 0, pb.Width - 1, pb.Height - 1);
-
-            using (var pen = new Pen(Color.FromArgb(255, 27, 29, 54), 5)) // color + thickness
-            {
-                e.Graphics.DrawRectangle(pen, rect);
-            }
+            using var pen = new Pen(Color.FromArgb(255, 27, 29, 54), 5);
+            e.Graphics.DrawRectangle(pen, rect);
         }
 
         private static void AttachClickRecursive(Control ctrl, Action onClick)
@@ -179,13 +170,12 @@ namespace App
                 AttachClickRecursive(child, onClick);
         }
 
-        // Load image async — keep MemoryStream alive (Image.FromStream needs it open)
         private static async Task LoadImageAsync(PictureBox box, string url)
         {
             try
             {
                 var bytes = await Http.GetByteArrayAsync(url);
-                var ms = new MemoryStream(bytes); // intentionally not disposed
+                var ms = new MemoryStream(bytes);
                 box.Image = Image.FromStream(ms);
             }
             catch
@@ -198,9 +188,9 @@ namespace App
         // -------------------------------------------------------------------
         // Navigation
         // -------------------------------------------------------------------
-        private void MovieCard_Click(Panel card)
+        private async void MovieCard_Click(Panel card)
         {
-            if (card?.Tag is not Movie movie) return;
+            if (card?.Tag is not Models movie) return;
 
             string posterPath = $"{SupabaseUrl}/storage/v1/object/public/pictures/{movie.poster_path}";
             var genreNames = movie.movie_genres?
@@ -209,9 +199,12 @@ namespace App
                 .ToList();
             string genres = string.Join(", ", genreNames ?? new List<string>());
 
+            var crew = await Supabase.GetAll<MoviePerson>(
+                $"moviePeople?select=role,people(name,profile_path)&movie_id=eq.{movie.id}");
+
             new MoviePage(movie.title, movie.duration_minutes, movie.rating, movie.release_year,
                           movie.description, posterPath, movie.status, movie.adult,
-                          movie.director, genres).Show();
+                          movie.director, genres, crew).Show();
             Hide();
         }
 
@@ -224,14 +217,7 @@ namespace App
             Hide();
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e) { }
+        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e) { }
     }
 }

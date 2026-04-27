@@ -1,5 +1,5 @@
-﻿using App.Services;
-using HomePage;
+﻿using App.Pages;
+using App.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,7 +41,7 @@ namespace App.UI_Elements
             if (result != DialogResult.Yes) return;
             Session.AccessToken = null;
 
-           // new HomePage.Show();
+            new HomePage().Show();
             FindForm()?.Hide();
         }
 

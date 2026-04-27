@@ -1,4 +1,4 @@
-namespace HomePage
+namespace App
 {
     internal static class Program
     {

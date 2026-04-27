@@ -27,6 +27,12 @@ namespace App
             string email = EmailTextBox.Text.Trim();
             string password = PasswordTextBox.Text.Trim();
 
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Please fill in all fields.");
+                return;
+            }
+
             var token = await AuthService.Login(email, password);
 
             if (token != null)
