@@ -17,13 +17,18 @@ namespace App
         {
             InitializeComponent();
 
+            //NavigationBar
+            NavigationBar navigationBar = new NavigationBar("profile");
+            navigationBar.Dock = DockStyle.Left;
+            Controls.Add(navigationBar);
+
+            //TitleBar
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             Controls.Add(titleBar);
 
-            NavigationBar navigationBar = new NavigationBar();
-            navigationBar.Dock = DockStyle.Left;
-            Controls.Add(navigationBar);
+            //Profile picture sizing
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

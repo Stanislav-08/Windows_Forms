@@ -25,14 +25,6 @@ namespace App
             
 
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private async void PersonPage_Load(object sender, EventArgs e)
-        {
-        }
     }
 
 }

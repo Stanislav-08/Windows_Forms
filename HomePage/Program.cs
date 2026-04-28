@@ -1,4 +1,6 @@
-namespace HomePage
+using App.Pages;
+
+namespace App
 {
     internal static class Program
     {
@@ -11,7 +13,7 @@ namespace HomePage
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new App.Pages.HomePage());
+            Application.Run(new HomePage());
         }
     }
 }

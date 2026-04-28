@@ -95,6 +95,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(24, 25, 46);
             Controls.Add(titleBarHolder);
             Name = "TitleBar";
             Size = new Size(1000, 32);

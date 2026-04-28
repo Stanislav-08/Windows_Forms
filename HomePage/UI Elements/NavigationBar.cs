@@ -1,5 +1,5 @@
-﻿using App.Services;
-using HomePage;
+﻿using App.Pages;
+using App.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,17 +18,20 @@ namespace App.UI_Elements
         private static readonly SupabaseClient _supabase = new SupabaseClient();
         private string CurrentPage;
 
-        public NavigationBar()
+        public NavigationBar(string activePage)
         {
             InitializeComponent();
+
             HomeButton.Image = Icons.Get("home",36);
             ProfileButton.Image = Icons.Get("profile",36);
             LogOutButton.Image = Icons.Get("log_out",36);
+
+            CurrentPage = activePage;
+            SetActive(activePage);
         }
 
         private void HomeButton_Click(object sender, EventArgs e) => NavigateTo("main");
         private void HomeLabel_Click(object sender, EventArgs e) => NavigateTo("main");
-
         private void ProfileButton_Click(object sender, EventArgs e) => NavigateTo("profile");
         private void ProfileLabel_Click(object sender, EventArgs e) => NavigateTo("profile");
 
@@ -41,35 +44,35 @@ namespace App.UI_Elements
             if (result != DialogResult.Yes) return;
             Session.AccessToken = null;
 
-           // new HomePage.Show();
+            new HomePage().Show();
             FindForm()?.Hide();
         }
-
-        private void NavigateTo(string page)
+        private void SetActive(string page)
         {
-            if (CurrentPage == page) return;
-            CurrentPage = page;
-
-            HomeButton.BackColor = SystemColors.Control;
-            HomeLabel.BackColor = SystemColors.Control;
-            ProfileButton.BackColor = SystemColors.Control;
-            ProfileLabel.BackColor = SystemColors.Control;
-
-            Form next;
+            HomeButton.BackColor = Color.FromArgb(28,30,54);
+            HomeLabel.BackColor = Color.FromArgb(28, 30, 54);
+            ProfileButton.BackColor = Color.FromArgb(28, 30, 54);
+            ProfileLabel.BackColor = Color.FromArgb(28, 30, 54);
 
             if (page == "main")
             {
                 HomeButton.BackColor = SystemColors.ControlDark;
                 HomeLabel.BackColor = SystemColors.ControlDark;
-                next = new MainPage();
             }
             else
             {
                 ProfileButton.BackColor = SystemColors.ControlDark;
                 ProfileLabel.BackColor = SystemColors.ControlDark;
-                next = new ProfilePage();
             }
+        }
+        private void NavigateTo(string page)
+        {
+            if (CurrentPage == page) return;
 
+            CurrentPage = page;
+            SetActive(page);
+
+            Form next = page == "main" ? new MainPage() : new ProfilePage();
             next.Show();
             FindForm()?.Hide();
         }

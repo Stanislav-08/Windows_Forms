@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.WebRequestMethods;
 
 namespace App.Services
 {
@@ -16,7 +14,12 @@ namespace App.Services
         private static readonly HttpClient Http = AppHttpClient.Instance;
 
         private readonly string Url = "https://sbhlzychksdsmhtawhrp.supabase.co";
-        private readonly string ApiKey = "sb_publishable_xFOf5KlGK5vMTPLz1cdH6Q_Q14a5n5f";
+        private readonly string ApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU";
+
+        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
         // ===================================================================
         // AUTH
@@ -60,9 +63,8 @@ namespace App.Services
         public async Task Logout(string accessToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, $"{Url}/auth/v1/logout");
-            request.Headers.TryAddWithoutValidation("apikey", ApiKey);
+            AddApiHeaders(request);
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
-
             await Http.SendAsync(request);
         }
 
@@ -72,7 +74,11 @@ namespace App.Services
 
         public async Task<List<T>> GetAll<T>(string table, int maxRows = 10000)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{Url}/rest/v1/{table}?select=*");
+            string url = table.Contains('?')
+                ? $"{Url}/rest/v1/{table}"
+                : $"{Url}/rest/v1/{table}?select=*";
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
             AddApiHeaders(request);
             request.Headers.TryAddWithoutValidation("Range", $"0-{maxRows - 1}");
             request.Headers.TryAddWithoutValidation("Range-Unit", "items");
@@ -83,7 +89,7 @@ namespace App.Services
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"GET {table} FAILED: {error}");
+                MessageBox.Show($"GET {table} FAILED ({(int)response.StatusCode}): {error}");
                 return new List<T>();
             }
 
@@ -91,11 +97,11 @@ namespace App.Services
 
             try
             {
-                return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+                return JsonSerializer.Deserialize<List<T>>(json, JsonOptions) ?? new List<T>();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"DESERIALIZE {table} FAILED: {ex.Message}");
+                MessageBox.Show($"DESERIALIZE {table} FAILED: {ex.Message}\n\nJSON:\n{json[..Math.Min(json.Length, 300)]}");
                 return new List<T>();
             }
         }
@@ -111,7 +117,7 @@ namespace App.Services
 
             try
             {
-                return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+                return JsonSerializer.Deserialize<List<T>>(json, JsonOptions) ?? new List<T>();
             }
             catch
             {
@@ -123,7 +129,6 @@ namespace App.Services
         // REST — WRITE
         // ===================================================================
 
-        /// <summary>Inserts a row and returns the new auto-generated id, or null on failure.</summary>
         public async Task<long?> InsertAndReturnId(string table, object payload)
         {
             var request = BuildRequest(HttpMethod.Post, $"/rest/v1/{table}", payload, prefer: "return=representation");
@@ -132,7 +137,7 @@ namespace App.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                MessageBox.Show($"{table} INSERT FAILED: {json}");
+                MessageBox.Show($"{table} INSERT FAILED ({(int)response.StatusCode}): {json}");
                 return null;
             }
 
@@ -148,14 +153,13 @@ namespace App.Services
             return null;
         }
 
-        /// <summary>Inserts a row; ignores the response body.</summary>
         public async Task Insert(string table, object payload)
         {
             var request = BuildRequest(HttpMethod.Post, $"/rest/v1/{table}", payload);
             var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
-                MessageBox.Show($"{table} INSERT FAILED: {await response.Content.ReadAsStringAsync()}");
+                MessageBox.Show($"{table} INSERT FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
         }
 
         // ===================================================================
@@ -175,7 +179,7 @@ namespace App.Services
             var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
-                MessageBox.Show("UPLOAD FAILED: " + await response.Content.ReadAsStringAsync());
+                MessageBox.Show($"UPLOAD FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
         }
 
         // ===================================================================
@@ -192,6 +196,11 @@ namespace App.Services
 
         private void AddApiHeaders(HttpRequestMessage request, string? prefer = null)
         {
+            // Remove stale headers before adding fresh ones
+            request.Headers.Remove("apikey");
+            request.Headers.Remove("Authorization");
+            request.Headers.Remove("Prefer");
+
             request.Headers.TryAddWithoutValidation("apikey", ApiKey);
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {ApiKey}");
 

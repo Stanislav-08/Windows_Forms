@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.Databases
 {
-    public class Movie
+    public class Models
     {
+        public long id { get; set; }
         public string title { get; set; }
         public int duration_minutes { get; set; }
         public double rating { get; set; }
@@ -17,15 +18,31 @@ namespace App.Databases
         public string status { get; set; }
         public bool adult { get; set; }
         public string director { get; set; }
-        public List<MovieGenre> movie_genres { get; set; }
+        public List<MovieGenre>? movie_genres { get; set; }
+        public List<MoviePerson>? moviePeople { get; set; }
     }
+
     public class MovieGenre
     {
-        public Genre genres { get; set; } // nested genre object
+        public Genre genres { get; set; }
     }
 
     public class Genre
     {
         public string name { get; set; }
+    }
+
+    public class MoviePerson
+    {
+        public string role { get; set; }
+        public Person people { get; set; }
+    }
+
+    public class Person
+    {
+        public long id { get; set; }         // added — needed for Supabase deserialization
+        public string name { get; set; }
+        public string info { get; set; }
+        public string profile_path { get; set; }
     }
 }

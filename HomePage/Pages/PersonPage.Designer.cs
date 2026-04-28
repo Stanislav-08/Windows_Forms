@@ -252,7 +252,6 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "PersonPage";
             Text = "PersonPage";
-            Load += PersonPage_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();

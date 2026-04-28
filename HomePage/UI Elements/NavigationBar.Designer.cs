@@ -35,7 +35,9 @@
             HomeLabel = new ToolStripMenuItem();
             ProfileLabel = new ToolStripMenuItem();
             LogOutLabel = new ToolStripMenuItem();
+            panel1 = new Panel();
             menuStrip1.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // ProfileButton
@@ -79,7 +81,7 @@
             LogOutButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
             LogOutButton.FlatStyle = FlatStyle.Flat;
             LogOutButton.ForeColor = Color.Transparent;
-            LogOutButton.Location = new Point(0, 452);
+            LogOutButton.Location = new Point(0, 420);
             LogOutButton.Margin = new Padding(0);
             LogOutButton.Name = "LogOutButton";
             LogOutButton.Size = new Size(48, 48);
@@ -89,19 +91,21 @@
             // menuStrip1
             // 
             menuStrip1.AutoSize = false;
+            menuStrip1.BackColor = Color.FromArgb(28, 30, 54);
             menuStrip1.Dock = DockStyle.Right;
             menuStrip1.GripMargin = new Padding(0);
             menuStrip1.Items.AddRange(new ToolStripItem[] { HomeLabel, ProfileLabel, LogOutLabel });
             menuStrip1.Location = new Point(48, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(0);
-            menuStrip1.Size = new Size(102, 500);
+            menuStrip1.Size = new Size(102, 468);
             menuStrip1.TabIndex = 21;
             menuStrip1.Text = "menuStrip1";
             // 
             // HomeLabel
             // 
             HomeLabel.AutoSize = false;
+            HomeLabel.ForeColor = Color.White;
             HomeLabel.Name = "HomeLabel";
             HomeLabel.Padding = new Padding(0);
             HomeLabel.Size = new Size(102, 48);
@@ -111,6 +115,7 @@
             // ProfileLabel
             // 
             ProfileLabel.AutoSize = false;
+            ProfileLabel.ForeColor = Color.White;
             ProfileLabel.Name = "ProfileLabel";
             ProfileLabel.Padding = new Padding(0);
             ProfileLabel.Size = new Size(102, 48);
@@ -129,18 +134,29 @@
             LogOutLabel.Text = "Log out";
             LogOutLabel.Click += LogOutLabel_Click;
             // 
+            // panel1
+            // 
+            panel1.BackColor = Color.FromArgb(28, 30, 54);
+            panel1.Controls.Add(ProfileButton);
+            panel1.Controls.Add(LogOutButton);
+            panel1.Controls.Add(HomeButton);
+            panel1.Location = new Point(0, 0);
+            panel1.Margin = new Padding(0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(48, 468);
+            panel1.TabIndex = 22;
+            // 
             // NavigationBar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(LogOutButton);
-            Controls.Add(HomeButton);
-            Controls.Add(ProfileButton);
+            Controls.Add(panel1);
             Controls.Add(menuStrip1);
             Name = "NavigationBar";
-            Size = new Size(150, 500);
+            Size = new Size(150, 468);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -153,5 +169,6 @@
         private ToolStripMenuItem HomeLabel;
         private ToolStripMenuItem ProfileLabel;
         private ToolStripMenuItem LogOutLabel;
+        private Panel panel1;
     }
 }
