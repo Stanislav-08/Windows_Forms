@@ -78,7 +78,7 @@ namespace App
             }
         }
 
-        private static async Task<bool> DatabaseHasRows(string table)
+        private async Task<bool> DatabaseHasRows(string table)
         {
             try
             {
@@ -244,7 +244,7 @@ namespace App
         // -------------------------------------------------------------------
         // Navigation
         // -------------------------------------------------------------------
-        private void MovieCard_Click(Panel card)
+        private async void MovieCard_Click(Panel card)
         {
             if (card?.Tag is not Models movie) return;
 
@@ -255,9 +255,12 @@ namespace App
                 .ToList();
             string genres = string.Join(", ", genreNames ?? new List<string>());
 
+            var crew = await Supabase.GetAll<MoviePerson>(
+                $"moviePeople?select=role,people(name,profile_path)&movie_id=eq.{movie.id}");
+
             new MoviePage(movie.title, movie.duration_minutes, movie.rating, movie.release_year,
                           movie.description, posterPath, movie.status, movie.adult,
-                          movie.director, genres).Show();
+                          movie.director, genres, crew).Show();
             Hide();
         }
 

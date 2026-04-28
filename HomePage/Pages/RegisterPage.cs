@@ -1,14 +1,6 @@
-﻿using App;
-using App.Services;
+﻿using App.Services;
 using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Mail;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.DataFormats;
 
 namespace App.Pages
 {
@@ -19,33 +11,34 @@ namespace App.Pages
         public RegisterPage()
         {
             InitializeComponent();
-
-            AuthService=new AuthenticationService(new SupabaseClient());
+            AuthService = new AuthenticationService(new SupabaseClient());
 
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             Controls.Add(titleBar);
         }
 
-        private void RegisterPage_Load(object sender, EventArgs e)
-        {
-
-        }
+        private void RegisterPage_Load(object sender, EventArgs e) { }
 
         private async void RegisterButton_Click(object sender, EventArgs e)
         {
-            string email = EmailTextBox.Text;
-            string password = PasswordTextBox.Text;
-            string displayName = DisplayNameTextBox.Text;
+            string email = EmailTextBox.Text.Trim();
+            string password = PasswordTextBox.Text.Trim();
+            string displayName = DisplayNameTextBox.Text.Trim();
             string dateOfBirth = DateOfBirthDateTimePicker.Value.ToString("yyyy-MM-dd");
 
-            var success = await AuthService.Register(email, password, displayName, dateOfBirth);
-
-            if (success)
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(displayName))
             {
-                MessageBox.Show("Registration successful!");
-                MainPage mainPage = new MainPage();
-                mainPage.Show();
+                MessageBox.Show("Please fill in all fields.");
+                return;
+            }
+
+            var token = await AuthService.Register(email, password, displayName, dateOfBirth);
+
+            if (token != null)
+            {
+                Session.AccessToken = token;
+                new MainPage().Show();
                 Hide();
             }
             else
