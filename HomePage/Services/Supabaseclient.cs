@@ -11,7 +11,7 @@ namespace App.Services
 {
     public class SupabaseClient
     {
-        private static readonly HttpClient _http = AppHttpClient.Instance;
+        private static readonly HttpClient Http = AppHttpClient.Instance;
 
         private readonly string Url = "https://sbhlzychksdsmhtawhrp.supabase.co";
         private readonly string ApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU";
@@ -25,7 +25,7 @@ namespace App.Services
         // AUTH
         // ===================================================================
 
-        public async Task<string?> Register(string email, string password, string displayName, string dateOfBirth)
+        public async Task<bool> Register(string email, string password, string displayName, string dateOfBirth)
         {
             var payload = new
             {
@@ -35,17 +35,8 @@ namespace App.Services
             };
 
             var request = BuildRequest(HttpMethod.Post, "/auth/v1/signup", payload);
-            var response = await _http.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode) return null;
-
-            try
-            {
-                var doc = JsonDocument.Parse(json);
-                return doc.RootElement.GetProperty("access_token").GetString();
-            }
-            catch { return null; }
+            var response = await Http.SendAsync(request);
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<string?> Login(string email, string password)
@@ -53,7 +44,7 @@ namespace App.Services
             var payload = new { email, password };
 
             var request = BuildRequest(HttpMethod.Post, "/auth/v1/token?grant_type=password", payload);
-            var response = await _http.SendAsync(request);
+            var response = await Http.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode) return null;
@@ -63,7 +54,10 @@ namespace App.Services
                 var doc = JsonDocument.Parse(json);
                 return doc.RootElement.GetProperty("access_token").GetString();
             }
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task Logout(string accessToken)
@@ -78,7 +72,12 @@ namespace App.Services
         // REST — READ
         // ===================================================================
 
-        public async Task<List<T>> GetAll<T>(string tableAndQuery, int maxRows = 10000)
+        /// <summary>
+        /// Pass just the table name (e.g. "movies") for select=*,
+        /// OR a full query string (e.g. "movies?select=*,movie_genres(genres(name))")
+        /// and this method will NOT append its own ?select=*.
+        /// </summary>
+        public async Task<List<T>> GetAll<T>(string table, int maxRows = 10000)
         {
             string url = table.Contains('?')
                 ? $"{Url}/rest/v1/{table}"
@@ -90,8 +89,7 @@ namespace App.Services
             request.Headers.TryAddWithoutValidation("Range-Unit", "items");
             request.Headers.TryAddWithoutValidation("Prefer", "count=none");
 
-            // Read body ONCE
-            var json = await response.Content.ReadAsStringAsync();
+            var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -99,6 +97,8 @@ namespace App.Services
                 MessageBox.Show($"GET {table} FAILED ({(int)response.StatusCode}): {error}");
                 return new List<T>();
             }
+
+            var json = await response.Content.ReadAsStringAsync();
 
             try
             {
@@ -113,12 +113,11 @@ namespace App.Services
 
         public async Task<List<T>> Query<T>(string table, string filter, string select = "id")
         {
-            var url = $"{_url}/rest/v1/{table}?{filter}&select={select}&apikey={_apiKey}";
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_apiKey}");
-            request.Headers.TryAddWithoutValidation("Accept", "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                $"{Url}/rest/v1/{table}?{filter}&select={select}");
+            AddApiHeaders(request);
 
-            var response = await _http.SendAsync(request);
+            var response = await Http.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
 
             try
@@ -135,10 +134,11 @@ namespace App.Services
         // REST — WRITE
         // ===================================================================
 
+        /// <summary>Inserts a row and returns the new auto-generated id, or null on failure.</summary>
         public async Task<long?> InsertAndReturnId(string table, object payload)
         {
             var request = BuildRequest(HttpMethod.Post, $"/rest/v1/{table}", payload, prefer: "return=representation");
-            var response = await _http.SendAsync(request);
+            var response = await Http.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -159,11 +159,11 @@ namespace App.Services
             return null;
         }
 
+        /// <summary>Inserts a row; ignores the response body.</summary>
         public async Task Insert(string table, object payload)
         {
             var request = BuildRequest(HttpMethod.Post, $"/rest/v1/{table}", payload);
-            var response = await _http.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
                 MessageBox.Show($"{table} INSERT FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
@@ -179,11 +179,11 @@ namespace App.Services
             content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
             var request = new HttpRequestMessage(HttpMethod.Put,
-                $"{_url}/storage/v1/object/pictures/{storagePath}");
+                $"{Url}/storage/v1/object/pictures/{storagePath}");
             request.Content = content;
             AddApiHeaders(request);
 
-            var response = await _http.SendAsync(request);
+            var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
                 MessageBox.Show($"UPLOAD FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
@@ -195,7 +195,7 @@ namespace App.Services
 
         private HttpRequestMessage BuildRequest(HttpMethod method, string path, object body, string? prefer = null)
         {
-            var request = new HttpRequestMessage(method, $"{_url}{path}");
+            var request = new HttpRequestMessage(method, $"{Url}{path}");
             request.Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
             AddApiHeaders(request, prefer);
             return request;
@@ -203,7 +203,6 @@ namespace App.Services
 
         private void AddApiHeaders(HttpRequestMessage request, string? prefer = null)
         {
-            // Remove stale headers before adding fresh ones
             request.Headers.Remove("apikey");
             request.Headers.Remove("Authorization");
             request.Headers.Remove("Prefer");

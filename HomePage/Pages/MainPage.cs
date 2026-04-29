@@ -16,6 +16,7 @@ namespace App
     public partial class MainPage : Form
     {
         private const string SupabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
+
         private static readonly HttpClient Http = AppHttpClient.Instance;
         private static readonly SupabaseClient Supabase = new SupabaseClient();
         private static readonly TMDB_Service Tmdb = new TMDB_Service(Supabase);
@@ -24,15 +25,13 @@ namespace App
         {
             InitializeComponent();
 
-            //NavigationBar
-            NavigationBar navigationBar = new NavigationBar("main");
-            navigationBar.Dock = DockStyle.Left;
-            Controls.Add(navigationBar);
-
-            //TitleBar
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             Controls.Add(titleBar);
+
+            NavigationBar navigationBar = new NavigationBar("main");
+            navigationBar.Dock = DockStyle.Left;
+            Controls.Add(navigationBar);
 
             ConfigureFlow(flowLayoutPanel1);
             ConfigureFlow(flowLayoutPanel2);
@@ -48,25 +47,16 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Form load
+        // Form load — sync only if Supabase is empty, then load UI
         // -------------------------------------------------------------------
         private async void MainPage_Load(object sender, EventArgs e)
         {
-            // TEMP DEBUG - raw HTTP test
-            var client = new HttpClient();
-            var req = new HttpRequestMessage(HttpMethod.Get,
-                "https://sbhlzychksdsmhtawhrp.supabase.co/rest/v1/movies?select=*");
-            req.Headers.TryAddWithoutValidation("apikey", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU");
-            req.Headers.TryAddWithoutValidation("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU");
-            var res = await client.SendAsync(req);
-            var body = await res.Content.ReadAsStringAsync();
-            MessageBox.Show($"STATUS: {(int)res.StatusCode}\n\nBODY:\n{body[..Math.Min(body.Length, 500)]}");
             try
             {
                 bool moviesExist = await DatabaseHasRows("movies");
-                MessageBox.Show($"DEBUG: moviesExist = {moviesExist}");
+                bool peopleExist = await DatabaseHasRows("people");
 
-                if (!moviesExist)
+                if (!moviesExist || !peopleExist)
                     await Tmdb.SyncAll();
 
                 await LoadMovies();
@@ -78,41 +68,27 @@ namespace App
             }
         }
 
-        private async Task<bool> DatabaseHasRows(string table)
+        private static async Task<bool> DatabaseHasRows(string table)
         {
             try
             {
-                var client = new HttpClient();
-                var req = new HttpRequestMessage(HttpMethod.Get,
-                    $"https://sbhlzychksdsmhtawhrp.supabase.co/rest/v1/{table}?select=id&limit=1");
-                req.Headers.TryAddWithoutValidation("apikey", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU");
-                req.Headers.TryAddWithoutValidation("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU");
-
-                var res = await client.SendAsync(req);
-                var body = await res.Content.ReadAsStringAsync();
-                MessageBox.Show($"DatabaseHasRows({table}): {(int)res.StatusCode}\n{body[..Math.Min(body.Length, 200)]}");
-
-                var arr = JsonSerializer.Deserialize<JsonElement>(body);
-                return arr.ValueKind == JsonValueKind.Array && arr.GetArrayLength() > 0;
+                var rows = await Supabase.GetAll<JsonElement>($"{table}?select=id&limit=1");
+                return rows != null && rows.Count > 0;
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"DatabaseHasRows ERROR: {ex.Message}");
                 return false;
             }
         }
 
         // -------------------------------------------------------------------
-        // Load movies
+        // Load movies from Supabase and build UI cards
         // -------------------------------------------------------------------
         private async Task LoadMovies()
         {
             try
             {
                 var movies = await Supabase.GetAll<Models>("movies?select=*,movie_genres(genres(name))");
-                MessageBox.Show($"DEBUG LoadMovies: got {movies?.Count ?? -1} movies");
-
-                if (movies == null || movies.Count == 0) return;
 
                 flowLayoutPanel1.SuspendLayout();
                 flowLayoutPanel1.Controls.Clear();
@@ -135,16 +111,13 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Load people
+        // Load people from Supabase and build UI cards
         // -------------------------------------------------------------------
         private async Task LoadPeople()
         {
             try
             {
                 var people = await Supabase.GetAll<Person>("people?select=*");
-                MessageBox.Show($"DEBUG LoadPeople: got {people?.Count ?? -1} people");
-
-                if (people == null || people.Count == 0) return;
 
                 flowLayoutPanel2.SuspendLayout();
                 flowLayoutPanel2.Controls.Clear();
@@ -174,7 +147,7 @@ namespace App
             var card = new Panel
             {
                 Width = 150,
-                Height = 200,
+                Height = 283,
                 BackColor = Color.FromArgb(36, 38, 69),
                 Cursor = Cursors.Hand,
                 Margin = new Padding(5, 0, 5, 0)
@@ -183,12 +156,12 @@ namespace App
             var poster = new PictureBox
             {
                 Dock = DockStyle.Top,
-                Height = card.Height,
+                Height = 225,
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
             poster.Paint += Poster_Paint;
 
-            LoadImageAsync(poster, imageUrl);
+            _ = LoadImageAsync(poster, imageUrl);
 
             var label = new Label
             {
@@ -201,6 +174,7 @@ namespace App
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            // Label overlaid on poster
             poster.Controls.Add(label);
             card.Controls.Add(poster);
 
@@ -226,12 +200,13 @@ namespace App
                 AttachClickRecursive(child, onClick);
         }
 
+        // Load image async — keep MemoryStream alive (Image.FromStream needs it open)
         private static async Task LoadImageAsync(PictureBox box, string url)
         {
             try
             {
                 var bytes = await Http.GetByteArrayAsync(url);
-                var ms = new MemoryStream(bytes);
+                var ms = new MemoryStream(bytes); // intentionally not disposed
                 box.Image = Image.FromStream(ms);
             }
             catch
@@ -244,7 +219,7 @@ namespace App
         // -------------------------------------------------------------------
         // Navigation
         // -------------------------------------------------------------------
-        private async void MovieCard_Click(Panel card)
+        private void MovieCard_Click(Panel card)
         {
             if (card?.Tag is not Models movie) return;
 
@@ -255,12 +230,9 @@ namespace App
                 .ToList();
             string genres = string.Join(", ", genreNames ?? new List<string>());
 
-            var crew = await Supabase.GetAll<MoviePerson>(
-                $"moviePeople?select=role,people(name,profile_path)&movie_id=eq.{movie.id}");
-
             new MoviePage(movie.title, movie.duration_minutes, movie.rating, movie.release_year,
                           movie.description, posterPath, movie.status, movie.adult,
-                          movie.director, genres, crew).Show();
+                          movie.director, genres).Show();
             Hide();
         }
 

@@ -33,17 +33,30 @@ namespace App.Pages
                 return;
             }
 
-            var token = await AuthService.Register(email, password, displayName, dateOfBirth);
+            // Register returns bool, not a token
+            bool success = await AuthService.Register(email, password, displayName, dateOfBirth);
 
-            if (token != null)
+            if (success)
             {
-                Session.AccessToken = token;
-                new MainPage().Show();
-                Hide();
+                // After registering, log in to get the access token
+                string? token = await AuthService.Login(email, password);
+
+                if (token != null)
+                {
+                    Session.AccessToken = token;
+                    new MainPage().Show();
+                    Hide();
+                }
+                else
+                {
+                    MessageBox.Show("Registered successfully but login failed. Please log in manually.");
+                    new LoginPage().Show();
+                    Hide();
+                }
             }
             else
             {
-                MessageBox.Show("Registration failed.");
+                MessageBox.Show("Registration failed. Email may already be in use.");
             }
         }
 
