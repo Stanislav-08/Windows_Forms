@@ -26,14 +26,6 @@ namespace App
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             Controls.Add(titleBar);
-
-            //Profile picture sizing
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

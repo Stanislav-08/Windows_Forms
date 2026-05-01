@@ -52,14 +52,17 @@
             label11 = new Label();
             label12 = new Label();
             flowLayoutPanel1 = new FlowLayoutPanel();
+            panel3 = new Panel();
+            button9 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
+            panel3.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(26, 51);
+            pictureBox1.Location = new Point(72, 56);
             pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(200, 266);
@@ -71,9 +74,9 @@
             // 
             label1.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label1.ForeColor = SystemColors.ButtonHighlight;
-            label1.Location = new Point(243, 49);
+            label1.Location = new Point(278, 54);
             label1.Name = "label1";
-            label1.Size = new Size(60, 21);
+            label1.Size = new Size(45, 21);
             label1.TabIndex = 1;
             label1.Text = "Year";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -82,7 +85,7 @@
             // 
             label2.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label2.ForeColor = SystemColors.ButtonHighlight;
-            label2.Location = new Point(316, 49);
+            label2.Location = new Point(352, 54);
             label2.Name = "label2";
             label2.Size = new Size(90, 21);
             label2.TabIndex = 2;
@@ -93,7 +96,7 @@
             // 
             label3.Font = new Font("Arial", 19.8000011F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             label3.ForeColor = SystemColors.ButtonHighlight;
-            label3.Location = new Point(26, 7);
+            label3.Location = new Point(72, 12);
             label3.Name = "label3";
             label3.Size = new Size(496, 39);
             label3.TabIndex = 3;
@@ -104,7 +107,7 @@
             // 
             label4.Font = new Font("Arial", 7.8F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label4.ForeColor = SystemColors.ButtonHighlight;
-            label4.Location = new Point(294, 50);
+            label4.Location = new Point(330, 55);
             label4.Name = "label4";
             label4.Size = new Size(17, 17);
             label4.TabIndex = 4;
@@ -116,7 +119,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             label5.ForeColor = SystemColors.ButtonHighlight;
-            label5.Location = new Point(26, 354);
+            label5.Location = new Point(72, 359);
             label5.Name = "label5";
             label5.Size = new Size(56, 15);
             label5.TabIndex = 5;
@@ -126,7 +129,7 @@
             // 
             label6.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label6.ForeColor = SystemColors.ButtonHighlight;
-            label6.Location = new Point(241, 179);
+            label6.Location = new Point(278, 184);
             label6.Name = "label6";
             label6.Size = new Size(250, 138);
             label6.TabIndex = 7;
@@ -136,7 +139,7 @@
             // 
             label7.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label7.ForeColor = SystemColors.ButtonHighlight;
-            label7.Location = new Point(243, 130);
+            label7.Location = new Point(278, 135);
             label7.Name = "label7";
             label7.Size = new Size(279, 21);
             label7.TabIndex = 12;
@@ -147,7 +150,7 @@
             // 
             label8.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label8.ForeColor = SystemColors.ButtonHighlight;
-            label8.Location = new Point(242, 91);
+            label8.Location = new Point(278, 96);
             label8.Name = "label8";
             label8.Size = new Size(172, 21);
             label8.TabIndex = 13;
@@ -159,7 +162,7 @@
             panel1.Controls.Add(button2);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
-            panel1.Location = new Point(540, 135);
+            panel1.Location = new Point(528, 140);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
             panel1.Size = new Size(360, 80);
@@ -226,7 +229,7 @@
             panel2.Controls.Add(button5);
             panel2.Controls.Add(label9);
             panel2.ForeColor = SystemColors.ControlText;
-            panel2.Location = new Point(540, 50);
+            panel2.Location = new Point(528, 55);
             panel2.Margin = new Padding(3, 2, 3, 2);
             panel2.Name = "panel2";
             panel2.Size = new Size(360, 80);
@@ -338,7 +341,7 @@
             label10.AutoSize = true;
             label10.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label10.ForeColor = SystemColors.ButtonHighlight;
-            label10.Location = new Point(242, 76);
+            label10.Location = new Point(278, 81);
             label10.Name = "label10";
             label10.Size = new Size(60, 16);
             label10.TabIndex = 16;
@@ -349,7 +352,7 @@
             label11.AutoSize = true;
             label11.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label11.ForeColor = SystemColors.ButtonHighlight;
-            label11.Location = new Point(241, 116);
+            label11.Location = new Point(278, 121);
             label11.Name = "label11";
             label11.Size = new Size(51, 16);
             label11.TabIndex = 17;
@@ -359,7 +362,7 @@
             // 
             label12.Font = new Font("Arial", 10.2F, FontStyle.Bold);
             label12.ForeColor = SystemColors.ButtonHighlight;
-            label12.Location = new Point(241, 158);
+            label12.Location = new Point(278, 163);
             label12.Name = "label12";
             label12.Size = new Size(98, 21);
             label12.TabIndex = 18;
@@ -368,39 +371,70 @@
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(26, 381);
+            flowLayoutPanel1.Location = new Point(72, 386);
             flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(833, 197);
+            flowLayoutPanel1.Size = new Size(887, 197);
             flowLayoutPanel1.TabIndex = 19;
+            // 
+            // panel3
+            // 
+            panel3.AutoScroll = true;
+            panel3.Controls.Add(button9);
+            panel3.Controls.Add(pictureBox1);
+            panel3.Controls.Add(flowLayoutPanel1);
+            panel3.Controls.Add(label1);
+            panel3.Controls.Add(label12);
+            panel3.Controls.Add(label2);
+            panel3.Controls.Add(label11);
+            panel3.Controls.Add(label3);
+            panel3.Controls.Add(label10);
+            panel3.Controls.Add(label4);
+            panel3.Controls.Add(panel2);
+            panel3.Controls.Add(label5);
+            panel3.Controls.Add(panel1);
+            panel3.Controls.Add(label6);
+            panel3.Controls.Add(label8);
+            panel3.Controls.Add(label7);
+            panel3.Location = new Point(0, 32);
+            panel3.Margin = new Padding(0);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(1000, 468);
+            panel3.TabIndex = 20;
+            // 
+            // button9
+            // 
+            button9.BackColor = Color.Transparent;
+            button9.BackgroundImageLayout = ImageLayout.Center;
+            button9.FlatAppearance.BorderSize = 0;
+            button9.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button9.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button9.FlatStyle = FlatStyle.Flat;
+            button9.ForeColor = Color.Transparent;
+            button9.Location = new Point(12, 12);
+            button9.Margin = new Padding(0);
+            button9.Name = "button9";
+            button9.Padding = new Padding(0, 0, 5, 5);
+            button9.Size = new Size(48, 48);
+            button9.TabIndex = 21;
+            button9.UseVisualStyleBackColor = false;
+            button9.Click += button9_Click;
             // 
             // MoviePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(36, 38, 69);
-            ClientSize = new Size(910, 559);
-            Controls.Add(flowLayoutPanel1);
-            Controls.Add(label12);
-            Controls.Add(label11);
-            Controls.Add(label10);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
-            Controls.Add(label8);
-            Controls.Add(label7);
-            Controls.Add(label6);
-            Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(pictureBox1);
+            ClientSize = new Size(1000, 500);
+            Controls.Add(panel3);
             FormBorderStyle = FormBorderStyle.None;
             Name = "MoviePage";
             Text = "MoviePage";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -430,5 +464,7 @@
         private Label label11;
         private Label label12;
         private FlowLayoutPanel flowLayoutPanel1;
+        private Panel panel3;
+        private Button button9;
     }
 }

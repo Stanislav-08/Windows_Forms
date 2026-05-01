@@ -2,7 +2,7 @@
 
 namespace App.Databases
 {
-    public class Models
+    public class Movies
     {
         public long id { get; set; }
         public string title { get; set; }
@@ -37,6 +37,7 @@ namespace App.Databases
         public long person_id { get; set; }
         public string role { get; set; }
         public Person people { get; set; }
+        public Movies movies { get; set; }  // needed for PersonPage movie cards
     }
 
     public class Person
@@ -45,5 +46,9 @@ namespace App.Databases
         public string name { get; set; }
         public string info { get; set; }
         public string profile_path { get; set; }
+        public string date_of_birth { get; set; }
+        public string place_of_birth { get; set; }
+        public string gender { get; set; }
+        public List<MoviePerson>? movie_people { get; set; }
     }
 }

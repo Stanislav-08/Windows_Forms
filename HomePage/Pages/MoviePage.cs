@@ -44,6 +44,7 @@ namespace App
             button7.Image = Icons.Get("outlined_star");
             button8.Image = Icons.Get("outlined_star");
             button2.Image = Icons.Get("outlined_favourite", 60);
+            button9.Image = Icons.Get("back_arrow");
 
             ConfigureFlow(flowLayoutPanel1);
             LoadCrew(crew);
@@ -179,6 +180,12 @@ namespace App
                 stateFavourite = "not favourite";
                 button2.Image = Icons.Get("outlined_favourite", 60);
             }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            new MainPage().Show();
         }
     }
 }

@@ -47,7 +47,7 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Form load — sync only if Supabase is empty, then load UI
+        // Form load
         // -------------------------------------------------------------------
         private async void MainPage_Load(object sender, EventArgs e)
         {
@@ -82,13 +82,15 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Load movies from Supabase and build UI cards
+        // Load movies — include genres and cast
         // -------------------------------------------------------------------
         private async Task LoadMovies()
         {
             try
             {
-                var movies = await Supabase.GetAll<Models>("movies?select=*,movie_genres(genres(name))");
+                var movies = await Supabase.GetAll<Movies>(
+                    "movies?select=*,movie_genres(genres(name)),movie_people(role,people(name,profile_path))"
+                );
 
                 flowLayoutPanel1.SuspendLayout();
                 flowLayoutPanel1.Controls.Clear();
@@ -111,13 +113,15 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Load people from Supabase and build UI cards
+        // Load people — include their movies
         // -------------------------------------------------------------------
         private async Task LoadPeople()
         {
             try
             {
-                var people = await Supabase.GetAll<Person>("people?select=*");
+                var people = await Supabase.GetAll<Person>(
+                    "people?select=*,movie_people(role,movies(id,title,poster_path))"
+                );
 
                 flowLayoutPanel2.SuspendLayout();
                 flowLayoutPanel2.Controls.Clear();
@@ -140,7 +144,7 @@ namespace App
         }
 
         // -------------------------------------------------------------------
-        // Build a reusable image + label card
+        // Card builder
         // -------------------------------------------------------------------
         private Panel CreateCard(string text, string imageUrl)
         {
@@ -174,7 +178,6 @@ namespace App
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Label overlaid on poster
             poster.Controls.Add(label);
             card.Controls.Add(poster);
 
@@ -188,9 +191,7 @@ namespace App
 
             var rect = new Rectangle(0, 0, pb.Width - 1, pb.Height - 1);
             using (var pen = new Pen(Color.FromArgb(255, 27, 29, 54), 5))
-            {
                 e.Graphics.DrawRectangle(pen, rect);
-            }
         }
 
         private static void AttachClickRecursive(Control ctrl, Action onClick)
@@ -200,13 +201,12 @@ namespace App
                 AttachClickRecursive(child, onClick);
         }
 
-        // Load image async — keep MemoryStream alive (Image.FromStream needs it open)
         private static async Task LoadImageAsync(PictureBox box, string url)
         {
             try
             {
                 var bytes = await Http.GetByteArrayAsync(url);
-                var ms = new MemoryStream(bytes); // intentionally not disposed
+                var ms = new MemoryStream(bytes);
                 box.Image = Image.FromStream(ms);
             }
             catch
@@ -221,7 +221,7 @@ namespace App
         // -------------------------------------------------------------------
         private void MovieCard_Click(Panel card)
         {
-            if (card?.Tag is not Models movie) return;
+            if (card?.Tag is not Movies movie) return;
 
             string posterPath = $"{SupabaseUrl}/storage/v1/object/public/pictures/{movie.poster_path}";
             var genreNames = movie.movie_genres?
@@ -230,9 +230,12 @@ namespace App
                 .ToList();
             string genres = string.Join(", ", genreNames ?? new List<string>());
 
-            new MoviePage(movie.title, movie.duration_minutes, movie.rating, movie.release_year,
-                          movie.description, posterPath, movie.status, movie.adult,
-                          movie.director, genres).Show();
+            new MoviePage(
+                movie.title, movie.duration_minutes, movie.rating, movie.release_year,
+                movie.description, posterPath, movie.status, movie.adult,
+                movie.director, genres, movie.movie_people
+            ).Show();
+
             Hide();
         }
 
@@ -241,7 +244,13 @@ namespace App
             if (card?.Tag is not Person person) return;
 
             string imageUrl = $"{SupabaseUrl}/storage/v1/object/public/pictures/{person.profile_path}";
-            new PersonPage(person.name, person.info, imageUrl).Show();
+
+            new PersonPage(
+                person.name, person.info, imageUrl,
+                person.date_of_birth, person.place_of_birth, person.gender,
+                person.movie_people
+            ).Show();
+
             Hide();
         }
 
