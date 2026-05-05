@@ -6,20 +6,27 @@ namespace App.Pages
 {
     public partial class RegisterPage : Form
     {
-        private readonly AuthenticationService AuthService;
+        private AuthenticationService AuthService;
 
         public RegisterPage()
         {
             InitializeComponent();
-            AuthService = new AuthenticationService(new SupabaseClient());
 
+            //Initialize AuthService
+            AuthService = new AuthenticationService();
+
+            //Title bar
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             Controls.Add(titleBar);
+
+            //Secret password
+            PasswordTextBox.UseSystemPasswordChar = true;
+
+            button9.Image = Icons.Get("back_arrow");
         }
 
-        private void RegisterPage_Load(object sender, EventArgs e) { }
-
+        //Registration
         private async void RegisterButton_Click(object sender, EventArgs e)
         {
             string email = EmailTextBox.Text.Trim();
@@ -27,23 +34,31 @@ namespace App.Pages
             string displayName = DisplayNameTextBox.Text.Trim();
             string dateOfBirth = DateOfBirthDateTimePicker.Value.ToString("yyyy-MM-dd");
 
+
+            //Empty field check
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(displayName))
             {
                 MessageBox.Show("Please fill in all fields.");
                 return;
             }
 
-            // Register returns bool, not a token
+            //Waiting registration 
             bool success = await AuthService.Register(email, password, displayName, dateOfBirth);
 
             if (success)
             {
-                // After registering, log in to get the access token
-                string? token = await AuthService.Login(email, password);
+                // Waiting login after registration
+                string token = await AuthService.Login(email, password);
 
                 if (token != null)
                 {
+
+                    //Store username
+                    Session.DisplayName = displayName;
+
+                    //Fetch and store token
                     Session.AccessToken = token;
+
                     new MainPage().Show();
                     Hide();
                 }
@@ -60,9 +75,16 @@ namespace App.Pages
             }
         }
 
+        //Toggle password visibility
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             PasswordTextBox.UseSystemPasswordChar = !checkBox1.Checked;
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            new HomePage().Show();
         }
     }
 }

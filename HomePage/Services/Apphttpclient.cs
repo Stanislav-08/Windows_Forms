@@ -4,7 +4,7 @@ namespace App.Services
 {
     public static class AppHttpClient
     {
-        public static readonly HttpClient Instance;
+        public static HttpClient Instance;
 
         static AppHttpClient()
         {

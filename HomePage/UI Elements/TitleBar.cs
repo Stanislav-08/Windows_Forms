@@ -17,19 +17,29 @@ namespace App
         public TitleBar()
         {
             InitializeComponent();
-            closeButton.Image = Icons.Get("close", 16);
-            minimizeButton.Image = Icons.Get("minimize", 16);
-            maximizeButton.Image = Icons.Get("maximize", 16);
+
+            //Icons initialization
+            CloseButton.Image = Icons.Get("close", 16);
+            MinimizeButton.Image = Icons.Get("minimize", 16);
+            MaximizeButton.Image = Icons.Get("maximize", 16);
         }
+
+        //----------Close function----------
 
         private void closeButton_Click(object sender, EventArgs e)
         {
             Environment.Exit(Environment.ExitCode);
         }
+
+        //----------Minimize function----------
+
         private void minimizeButton_Click(object sender, EventArgs e)
         {
             this.FindForm().WindowState = FormWindowState.Minimized;
         }
+
+        //----------Maximize function----------
+
         private void maximizeButton_Click(object sender, EventArgs e)
         {
             if (this.FindForm().WindowState == FormWindowState.Normal)
@@ -41,6 +51,8 @@ namespace App
                 this.FindForm().WindowState = FormWindowState.Normal;
             }
         }
+
+        //----------Hover function and other strange things----------
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace App.Databases
+﻿namespace App.Databases
 {
     public class Movies
     {
@@ -14,8 +12,8 @@ namespace App.Databases
         public string status { get; set; }
         public bool adult { get; set; }
         public string director { get; set; }
-        public List<MovieGenre>? movie_genres { get; set; }
-        public List<MoviePerson>? movie_people { get; set; }
+        public List<MovieGenre> movie_genres { get; set; }
+        public List<MoviePerson> movie_people { get; set; }
     }
 
     public class MovieGenre
@@ -37,7 +35,7 @@ namespace App.Databases
         public long person_id { get; set; }
         public string role { get; set; }
         public Person people { get; set; }
-        public Movies movies { get; set; }  // needed for PersonPage movie cards
+        public Movies movies { get; set; }
     }
 
     public class Person
@@ -49,6 +47,6 @@ namespace App.Databases
         public string date_of_birth { get; set; }
         public string place_of_birth { get; set; }
         public string gender { get; set; }
-        public List<MoviePerson>? movie_people { get; set; }
+        public List<MoviePerson> movie_people { get; set; }
     }
 }

@@ -72,11 +72,11 @@
             // 
             label7.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label7.ForeColor = SystemColors.ButtonHighlight;
-            label7.Location = new Point(293, 68);
+            label7.Location = new Point(293, 72);
             label7.Name = "label7";
             label7.Size = new Size(144, 21);
             label7.TabIndex = 30;
-            label7.Text = "...";
+            label7.Text = "1999-06-06";
             label7.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label6
@@ -85,7 +85,7 @@
             label6.ForeColor = SystemColors.ButtonHighlight;
             label6.Location = new Point(293, 154);
             label6.Name = "label6";
-            label6.Size = new Size(279, 144);
+            label6.Size = new Size(666, 166);
             label6.TabIndex = 25;
             label6.Text = "bio";
             // 
@@ -94,7 +94,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             label5.ForeColor = SystemColors.ButtonHighlight;
-            label5.Location = new Point(72, 369);
+            label5.Location = new Point(72, 346);
             label5.Margin = new Padding(0);
             label5.Name = "label5";
             label5.Size = new Size(70, 15);
@@ -128,7 +128,7 @@
             label1.AutoSize = true;
             label1.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = SystemColors.ButtonHighlight;
-            label1.Location = new Point(462, 54);
+            label1.Location = new Point(680, 56);
             label1.Name = "label1";
             label1.Size = new Size(60, 16);
             label1.TabIndex = 38;
@@ -139,7 +139,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.ForeColor = SystemColors.ButtonHighlight;
-            label2.Location = new Point(293, 89);
+            label2.Location = new Point(443, 52);
             label2.Name = "label2";
             label2.Size = new Size(100, 16);
             label2.TabIndex = 37;
@@ -149,7 +149,7 @@
             // 
             label4.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label4.ForeColor = SystemColors.ButtonHighlight;
-            label4.Location = new Point(293, 105);
+            label4.Location = new Point(443, 72);
             label4.Name = "label4";
             label4.Size = new Size(159, 21);
             label4.TabIndex = 36;
@@ -160,16 +160,16 @@
             // 
             label9.Font = new Font("Arial", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ButtonHighlight;
-            label9.Location = new Point(462, 66);
+            label9.Location = new Point(680, 72);
             label9.Name = "label9";
-            label9.Size = new Size(279, 21);
+            label9.Size = new Size(128, 21);
             label9.TabIndex = 35;
-            label9.Text = "...";
+            label9.Text = "Female";
             label9.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(72, 395);
+            flowLayoutPanel1.Location = new Point(72, 372);
             flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(887, 197);

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace App.Services
+﻿namespace App.Services
 {
-    internal class Session
+    public static class Session
     {
-        public static string? AccessToken { get; set; }
+        //Auth token
+        public static string AccessToken { get; set; }
+
+        //Username
+        public static string DisplayName { get; set; }
+
+        //Login check
+        public static bool IsLoggedIn => !string.IsNullOrEmpty(AccessToken);
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using App.Databases;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -11,51 +13,70 @@ namespace App.Services
 {
     public class TMDB_Service
     {
-        private static readonly HttpClient Http = AppHttpClient.Instance;
-        private readonly SupabaseClient Supabase;
+        private static HttpClient Http = AppHttpClient.Instance;
+        private SupabaseClient Supabase;
 
-        private const string TmdbBase = "https://api.themoviedb.org/3";
-        private const string TmdbImage = "https://image.tmdb.org/t/p/w500";
-        private readonly string _tmdbKey = "682693c99aa733b5c721b59c841f9748";
+        private string TmdbBase = "https://api.themoviedb.org/3";
+        private string TmdbImage = "https://image.tmdb.org/t/p/w500";
+        private string TmdbKey = "682693c99aa733b5c721b59c841f9748";
 
-        // In-memory cache: person name -> supabase id
-        private readonly Dictionary<string, long> _personCache = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
-        private readonly SemaphoreSlim _personCacheLock = new SemaphoreSlim(1, 1);
+        //Person cache
+        //Person name -> supabase id
+        private Dictionary<string, long> PersonCache = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
+        private SemaphoreSlim PersonCacheLock = new SemaphoreSlim(1, 1);
+
+        //Genre cache
+        //Genre name -> supabase id
+        private Dictionary<string, long> GenreCache = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
+        private SemaphoreSlim GenreCacheLock = new SemaphoreSlim(1, 1);
 
         public TMDB_Service(SupabaseClient supabase)
         {
             Supabase = supabase;
         }
 
-        // ===================================================================
-        // PUBLIC ENTRY-POINT
-        // ===================================================================
-
+        //----------Sync everything function----------
         public async Task SyncAll()
         {
-            await SyncPeople();       // people first
-            await PreloadPersonCache(); // load all people into memory
-            await SyncMovies();       // movies link to people via cache
+            await SyncPeople();
+            await PreloadPersonCache();
+            await PreloadGenreCache();
+            await SyncMovies();
         }
 
-        // ===================================================================
-        // PERSON CACHE
-        // ===================================================================
+        //----------Preload person cache----------
 
         private async Task PreloadPersonCache()
         {
             var people = await Supabase.GetAll<PersonRow>("people?select=id,name");
-            _personCache.Clear();
+            PersonCache.Clear();
             foreach (var p in people)
+            {
                 if (!string.IsNullOrEmpty(p.name))
-                    _personCache[p.name] = p.id;
-
-            MessageBox.Show($"Person cache loaded: {_personCache.Count} people");
+                {
+                    PersonCache[p.name] = p.id;
+                }
+            }
+            MessageBox.Show($"Person cache loaded: {PersonCache.Count} people");
         }
 
-        // ===================================================================
-        // MOVIES
-        // ===================================================================
+        //----------Preload genre cache----------
+
+        private async Task PreloadGenreCache()
+        {
+            var genres = await Supabase.GetAll<GenreRow>("genres?select=id,name");
+            GenreCache.Clear();
+            foreach (var g in genres)
+            {
+                if (!string.IsNullOrEmpty(g.name))
+                {
+                    GenreCache[g.name] = g.id;
+                }
+            }
+            MessageBox.Show($"Genre cache loaded: {GenreCache.Count} genres");
+        }
+
+        //----------Sync movies----------
 
         public async Task SyncMovies()
         {
@@ -105,9 +126,11 @@ namespace App.Services
             MessageBox.Show($"SyncMovies done: {successCount} succeeded, {failCount} failed");
         }
 
+        //----------Fetch popular movies----------
+
         private async Task<List<TmdbMovie>> FetchPopularMovies(int page)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/movie/popular?api_key={_tmdbKey}&page={page}");
+            var response = await Http.GetAsync($"{TmdbBase}/movie/popular?api_key={TmdbKey}&page={page}");
             if (!response.IsSuccessStatusCode)
             {
                 MessageBox.Show($"FetchPopularMovies FAILED ({(int)response.StatusCode})");
@@ -117,21 +140,33 @@ namespace App.Services
             return JsonSerializer.Deserialize<TmdbMovieResponse>(json)?.results ?? new List<TmdbMovie>();
         }
 
+        //----------Fetch movie details----------
+
         private async Task<TmdbMovieDetails?> FetchMovieDetails(int id)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}?api_key={_tmdbKey}");
-            if (!response.IsSuccessStatusCode) return null;
+            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}?api_key={TmdbKey}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TmdbMovieDetails>(json);
         }
 
+        //----------Fetch movie credits----------
+
         private async Task<TmdbCredits?> FetchCredits(int id)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}/credits?api_key={_tmdbKey}");
-            if (!response.IsSuccessStatusCode) return null;
+            var response = await Http.GetAsync($"{TmdbBase}/movie/{id}/credits?api_key={TmdbKey}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TmdbCredits>(json);
         }
+
+        //----------Insert movie function----------
 
         private async Task InsertMovie(TmdbMovie m, TmdbMovieDetails? d, TmdbCredits? credits)
         {
@@ -153,16 +188,17 @@ namespace App.Services
             var movieId = await Supabase.InsertAndReturnId("movies", payload);
             if (movieId == null) return;
 
-            // Genres
             if (d?.genres != null)
+            {
                 foreach (var g in d.genres)
                 {
-                    var genreId = await GetOrCreateGenre(g.name);
+                    var genreId = await GetOrCreateGenreCached(g.name);
                     await Supabase.Insert("movie_genres", new { movie_id = movieId.Value, genre_id = genreId });
                 }
+            }
 
-            // Top 10 cast only
             if (credits?.cast != null)
+            {
                 foreach (var actor in credits.cast.Take(10))
                 {
                     if (string.IsNullOrEmpty(actor.name)) continue;
@@ -180,11 +216,10 @@ namespace App.Services
                         role
                     });
                 }
+            }
         }
 
-        // ===================================================================
-        // PEOPLE
-        // ===================================================================
+        //----------Sync people----------
 
         public async Task SyncPeople()
         {
@@ -206,16 +241,13 @@ namespace App.Services
                     break;
                 }
 
-                // Fetch details for all people in parallel
                 var tasks = people
                     .Where(p => !string.IsNullOrEmpty(p.profile_path))
                     .Select(async p =>
                     {
                         try
                         {
-                            // Fetch full person details for bio fields
                             var details = await FetchPersonDetails(p.id);
-
                             var imageBytes = await Http.GetByteArrayAsync(TmdbImage + p.profile_path);
                             await Supabase.UploadImage(imageBytes, $"people/{p.id}.jpg");
 
@@ -244,9 +276,11 @@ namespace App.Services
             MessageBox.Show($"SyncPeople done: {successCount} succeeded, {failCount} failed");
         }
 
+        //----------Fetch popular people----------
+
         private async Task<List<TmdbPerson>> FetchPopularPeople(int page = 1)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/person/popular?api_key={_tmdbKey}&page={page}");
+            var response = await Http.GetAsync($"{TmdbBase}/person/popular?api_key={TmdbKey}&page={page}");
             if (!response.IsSuccessStatusCode)
             {
                 MessageBox.Show($"FetchPopularPeople FAILED ({(int)response.StatusCode})");
@@ -256,50 +290,77 @@ namespace App.Services
             return JsonSerializer.Deserialize<TmdbPersonResponse>(json)?.results ?? new List<TmdbPerson>();
         }
 
+        //----------Fetch person details----------
+
         private async Task<TmdbPersonDetails?> FetchPersonDetails(int id)
         {
-            var response = await Http.GetAsync($"{TmdbBase}/person/{id}?api_key={_tmdbKey}");
-            if (!response.IsSuccessStatusCode) return null;
+            var response = await Http.GetAsync($"{TmdbBase}/person/{id}?api_key={TmdbKey}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TmdbPersonDetails>(json);
         }
 
-        // TMDB gender: 0 = Not set, 1 = Female, 2 = Male, 3 = Non-binary
-        private static string ConvertGender(int? gender) => gender switch
+        private static string ConvertGender(int? gender)
         {
-            1 => "Female",
-            2 => "Male",
-            3 => "Non-binary",
-            _ => "Unknown"
-        };
+            switch (gender)
+            {
+                case 1: return "Female";
+                case 2: return "Male";
+                case 3: return "Non-binary";
+                default: return "Unknown";
+            }
+        }
 
-        // ===================================================================
-        // HELPERS
-        // ===================================================================
+        //----------Helpers----------
 
-        private async Task<long> GetOrCreateGenre(string name)
+        private async Task<long> GetOrCreateGenreCached(string name)
         {
-            var encoded = Uri.EscapeDataString(name);
-            var existing = await Supabase.Query<GenreRow>("genres", $"name=eq.{encoded}");
-            if (existing.Count > 0) return existing[0].id;
-            return await Supabase.InsertAndReturnId("genres", new { name }) ?? 0;
+            await GenreCacheLock.WaitAsync();
+            try
+            {
+                if (GenreCache.TryGetValue(name, out long cachedId))
+                {
+                    return cachedId;
+                }
+            }
+            finally
+            {
+                GenreCacheLock.Release(); 
+            }
+
+            var newId = await Supabase.InsertAndReturnId("genres", new { name }) ?? 0;
+
+            await GenreCacheLock.WaitAsync();
+            try 
+            {
+                GenreCache[name] = newId;
+            }
+            finally 
+            {
+                GenreCacheLock.Release(); 
+            }
+
+            return newId;
         }
 
         private async Task<long?> GetOrCreatePersonCached(int tmdbId, string name, string? tmdbProfilePath)
         {
-            // 1. Check in-memory cache
-            await _personCacheLock.WaitAsync();
+            await PersonCacheLock.WaitAsync();
             try
             {
-                if (_personCache.TryGetValue(name, out long cachedId))
+                if (PersonCache.TryGetValue(name, out long cachedId))
+                {
                     return cachedId;
+                }
             }
-            finally
-            {
-                _personCacheLock.Release();
+            finally 
+            { 
+                PersonCacheLock.Release(); 
             }
 
-            // 2. Not in cache — fetch details and insert
             var details = await FetchPersonDetails(tmdbId);
 
             string profilePath = "";
@@ -311,7 +372,7 @@ namespace App.Services
                     profilePath = $"people/{tmdbId}.jpg";
                     await Supabase.UploadImage(imageBytes, profilePath);
                 }
-                catch
+                catch 
                 {
                     profilePath = "";
                 }
@@ -327,12 +388,17 @@ namespace App.Services
                 gender = ConvertGender(details?.gender)
             });
 
-            // 3. Add to cache
             if (newId.HasValue)
             {
-                await _personCacheLock.WaitAsync();
-                try { _personCache[name] = newId.Value; }
-                finally { _personCacheLock.Release(); }
+                await PersonCacheLock.WaitAsync();
+                try 
+                { 
+                    PersonCache[name] = newId.Value;
+                }
+                finally
+                { 
+                    PersonCacheLock.Release();
+                }
             }
 
             return newId;
@@ -345,19 +411,27 @@ namespace App.Services
         }
     }
 
-    // ===================================================================
-    // INTERNAL QUERY MODELS
-    // ===================================================================
+    //-----------Special models----------
 
-    file class GenreRow { public long id { get; set; } }
-    file class PersonRow { public long id { get; set; } public string name { get; set; } }
+    class GenreRow 
+    { 
+        public long id { get; set; }
+        public string name { get; set; } 
+    }
+    class PersonRow 
+    {
+        public long id { get; set; }
+        public string name { get; set; } 
+    }
 
-    // ===================================================================
-    // TMDB API MODELS
-    // ===================================================================
-
-    public class TmdbMovieResponse { public List<TmdbMovie> results { get; set; } }
-    public class TmdbPersonResponse { public List<TmdbPerson> results { get; set; } }
+    public class TmdbMovieResponse 
+    { 
+        public List<TmdbMovie> results { get; set; }
+    }
+    public class TmdbPersonResponse 
+    { 
+        public List<TmdbPerson> results { get; set; } 
+    }
 
     public class TmdbMovie
     {
@@ -370,14 +444,17 @@ namespace App.Services
     {
         public string overview { get; set; }
         public bool adult { get; set; }
-        public string? status { get; set; }
+        public string status { get; set; }
         public int runtime { get; set; }
         public double vote_average { get; set; }
-        public string? release_date { get; set; }
+        public string release_date { get; set; }
         public List<Genre> genres { get; set; }
     }
 
-    public class Genre { public string name { get; set; } }
+    public class Genre 
+    {
+        public string name { get; set; }
+    }
 
     public class TmdbCredits
     {
@@ -389,8 +466,8 @@ namespace App.Services
     {
         public int id { get; set; }
         public string name { get; set; }
-        public string? character { get; set; }
-        public string? profile_path { get; set; }
+        public string character { get; set; }
+        public string profile_path { get; set; }
     }
 
     public class TmdbCrewMember
@@ -398,7 +475,7 @@ namespace App.Services
         public int id { get; set; }
         public string name { get; set; }
         public string job { get; set; }
-        public string? profile_path { get; set; }
+        public string profile_path { get; set; }
     }
 
     public class TmdbPerson
@@ -410,9 +487,9 @@ namespace App.Services
 
     public class TmdbPersonDetails
     {
-        public string? biography { get; set; }
-        public string? birthday { get; set; }
-        public string? place_of_birth { get; set; }
-        public int? gender { get; set; }
+        public string biography { get; set; }
+        public string birthday { get; set; }
+        public string place_of_birth { get; set; }
+        public int gender { get; set; }
     }
 }

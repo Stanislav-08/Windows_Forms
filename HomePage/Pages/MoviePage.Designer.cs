@@ -38,9 +38,8 @@
             label7 = new Label();
             label8 = new Label();
             panel1 = new Panel();
+            label13 = new Label();
             button2 = new Button();
-            button4 = new Button();
-            button3 = new Button();
             panel2 = new Panel();
             button8 = new Button();
             button7 = new Button();
@@ -131,7 +130,7 @@
             label6.ForeColor = SystemColors.ButtonHighlight;
             label6.Location = new Point(278, 184);
             label6.Name = "label6";
-            label6.Size = new Size(250, 138);
+            label6.Size = new Size(290, 138);
             label6.TabIndex = 7;
             label6.Text = "bio";
             // 
@@ -159,14 +158,24 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(label13);
             panel1.Controls.Add(button2);
-            panel1.Controls.Add(button4);
-            panel1.Controls.Add(button3);
-            panel1.Location = new Point(528, 140);
+            panel1.Location = new Point(599, 135);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(360, 80);
+            panel1.Size = new Size(360, 90);
             panel1.TabIndex = 14;
+            // 
+            // label13
+            // 
+            label13.Font = new Font("Arial", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label13.ForeColor = SystemColors.ButtonHighlight;
+            label13.Location = new Point(95, 0);
+            label13.Name = "label13";
+            label13.Size = new Size(177, 23);
+            label13.TabIndex = 21;
+            label13.Text = "ADD TO WATCHLIST";
+            label13.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // button2
             // 
@@ -177,48 +186,13 @@
             button2.FlatAppearance.MouseOverBackColor = Color.Transparent;
             button2.FlatStyle = FlatStyle.Flat;
             button2.ForeColor = Color.Transparent;
-            button2.Location = new Point(20, 11);
+            button2.Location = new Point(150, 23);
             button2.Margin = new Padding(0);
             button2.Name = "button2";
-            button2.Padding = new Padding(0, 0, 5, 5);
-            button2.Size = new Size(88, 58);
+            button2.Size = new Size(60, 60);
             button2.TabIndex = 21;
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
-            // 
-            // button4
-            // 
-            button4.BackColor = Color.Transparent;
-            button4.BackgroundImageLayout = ImageLayout.Center;
-            button4.FlatAppearance.BorderSize = 0;
-            button4.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            button4.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            button4.FlatStyle = FlatStyle.Popup;
-            button4.ForeColor = Color.Transparent;
-            button4.Location = new Point(260, 11);
-            button4.Margin = new Padding(0);
-            button4.Name = "button4";
-            button4.Padding = new Padding(0, 0, 5, 5);
-            button4.Size = new Size(88, 58);
-            button4.TabIndex = 18;
-            button4.UseVisualStyleBackColor = false;
-            // 
-            // button3
-            // 
-            button3.BackColor = Color.Transparent;
-            button3.BackgroundImageLayout = ImageLayout.Center;
-            button3.FlatAppearance.BorderSize = 0;
-            button3.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            button3.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            button3.FlatStyle = FlatStyle.Popup;
-            button3.ForeColor = Color.Transparent;
-            button3.Location = new Point(138, 11);
-            button3.Margin = new Padding(0);
-            button3.Name = "button3";
-            button3.Padding = new Padding(0, 0, 5, 5);
-            button3.Size = new Size(88, 58);
-            button3.TabIndex = 17;
-            button3.UseVisualStyleBackColor = false;
             // 
             // panel2
             // 
@@ -229,7 +203,7 @@
             panel2.Controls.Add(button5);
             panel2.Controls.Add(label9);
             panel2.ForeColor = SystemColors.ControlText;
-            panel2.Location = new Point(528, 55);
+            panel2.Location = new Point(599, 50);
             panel2.Margin = new Padding(3, 2, 3, 2);
             panel2.Name = "panel2";
             panel2.Size = new Size(360, 80);
@@ -251,7 +225,6 @@
             button8.Size = new Size(48, 48);
             button8.TabIndex = 20;
             button8.UseVisualStyleBackColor = false;
-            button8.Click += button8_Click;
             // 
             // button7
             // 
@@ -269,7 +242,6 @@
             button7.Size = new Size(48, 48);
             button7.TabIndex = 19;
             button7.UseVisualStyleBackColor = false;
-            button7.Click += button7_Click;
             // 
             // button6
             // 
@@ -287,7 +259,6 @@
             button6.Size = new Size(48, 48);
             button6.TabIndex = 18;
             button6.UseVisualStyleBackColor = false;
-            button6.Click += button6_Click;
             // 
             // button1
             // 
@@ -305,7 +276,6 @@
             button1.Size = new Size(48, 48);
             button1.TabIndex = 17;
             button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
             // 
             // button5
             // 
@@ -323,7 +293,6 @@
             button5.Size = new Size(48, 48);
             button5.TabIndex = 16;
             button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
             // 
             // label9
             // 
@@ -374,7 +343,7 @@
             flowLayoutPanel1.Location = new Point(72, 386);
             flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(887, 197);
+            flowLayoutPanel1.Size = new Size(887, 200);
             flowLayoutPanel1.TabIndex = 19;
             // 
             // panel3
@@ -451,8 +420,6 @@
         private Label label8;
         private Panel panel1;
         private Panel panel2;
-        private Button button4;
-        private Button button3;
         private Label label9;
         private Button button1;
         private Button button5;
@@ -466,5 +433,6 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private Panel panel3;
         private Button button9;
+        private Label label13;
     }
 }

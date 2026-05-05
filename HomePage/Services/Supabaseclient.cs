@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App.Databases;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,72 +12,18 @@ namespace App.Services
 {
     public class SupabaseClient
     {
-        private static readonly HttpClient Http = AppHttpClient.Instance;
+        private static HttpClient Http = AppHttpClient.Instance;
 
-        private readonly string Url = "https://sbhlzychksdsmhtawhrp.supabase.co";
-        private readonly string ApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU";
+        private string Url = "https://sbhlzychksdsmhtawhrp.supabase.co";
+        private string ApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaGx6eWNoa3Nkc21odGF3aHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUzMDYsImV4cCI6MjA5MTgzMTMwNn0.OMvyoMtnfKwq33C9Lm8PiwpuZvGx9S2av9CatqiXOvU";
 
-        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        private static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
-        // ===================================================================
-        // AUTH
-        // ===================================================================
+        //----------REST — READ----------
 
-        public async Task<bool> Register(string email, string password, string displayName, string dateOfBirth)
-        {
-            var payload = new
-            {
-                email,
-                password,
-                data = new { display_name = displayName, date_of_birth = dateOfBirth }
-            };
-
-            var request = BuildRequest(HttpMethod.Post, "/auth/v1/signup", payload);
-            var response = await Http.SendAsync(request);
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<string?> Login(string email, string password)
-        {
-            var payload = new { email, password };
-
-            var request = BuildRequest(HttpMethod.Post, "/auth/v1/token?grant_type=password", payload);
-            var response = await Http.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode) return null;
-
-            try
-            {
-                var doc = JsonDocument.Parse(json);
-                return doc.RootElement.GetProperty("access_token").GetString();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public async Task Logout(string accessToken)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{Url}/auth/v1/logout");
-            AddApiHeaders(request);
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
-            await Http.SendAsync(request);
-        }
-
-        // ===================================================================
-        // REST — READ
-        // ===================================================================
-
-        /// <summary>
-        /// Pass just the table name (e.g. "movies") for select=*,
-        /// OR a full query string (e.g. "movies?select=*,movie_genres(genres(name))")
-        /// and this method will NOT append its own ?select=*.
-        /// </summary>
         public async Task<List<T>> GetAll<T>(string table, int maxRows = 10000)
         {
             string url = table.Contains('?')
@@ -124,17 +71,14 @@ namespace App.Services
             {
                 return JsonSerializer.Deserialize<List<T>>(json, JsonOptions) ?? new List<T>();
             }
-            catch
+            catch 
             {
-                return new List<T>();
+                return new List<T>(); 
             }
         }
 
-        // ===================================================================
-        // REST — WRITE
-        // ===================================================================
+        //----------REST — WRITE----------
 
-        /// <summary>Inserts a row and returns the new auto-generated id, or null on failure.</summary>
         public async Task<long?> InsertAndReturnId(string table, object payload)
         {
             var request = BuildRequest(HttpMethod.Post, $"/rest/v1/{table}", payload, prefer: "return=representation");
@@ -159,59 +103,149 @@ namespace App.Services
             return null;
         }
 
-        /// <summary>Inserts a row; ignores the response body.</summary>
         public async Task Insert(string table, object payload)
         {
             var request = BuildRequest(HttpMethod.Post, $"/rest/v1/{table}", payload);
             var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
+            {
                 MessageBox.Show($"{table} INSERT FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+            }
         }
 
-        // ===================================================================
-        // STORAGE
-        // ===================================================================
+        //----------Watchlist addition function----------
+        public async Task<bool> AddToWatchlist(long movieId, string userToken)
+        {
+            var request = BuildRequest(
+                HttpMethod.Post,
+                "/rest/v1/watchlist",
+                new { movie_id = movieId },
+                prefer: "return=minimal",
+                userToken: userToken
+                );
+
+            var response = await Http.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MessageBox.Show($"AddToWatchlist FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+                return false;
+            }
+
+            return true;
+        }
+
+        //----------Watchlist removal function----------
+
+        public async Task<bool> RemoveFromWatchlist(long movieId, string userToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{Url}/rest/v1/watchlist?movie_id=eq.{movieId}");
+            AddApiHeaders(request, userToken: userToken);
+
+            var response = await Http.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                MessageBox.Show($"RemoveFromWatchlist FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+                return false;
+            }
+
+            return true;
+        }
+
+        //----------Get watchlist function----------
+
+        public async Task<List<WatchlistMovie>> GetWatchlist(string userToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{Url}/rest/v1/watchlist?select=movie_id," +
+                $"movies(id,title,poster_path,rating,release_year,duration_minutes,description,status,adult,director," +
+                $"movie_genres(genres(name)),movie_people(role,people(name,profile_path)))");
+            AddApiHeaders(request, userToken: userToken);
+
+            var response = await Http.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                return JsonSerializer.Deserialize<List<WatchlistMovie>>(json, JsonOptions) ?? new List<WatchlistMovie>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"GetWatchlist FAILED: {ex.Message}");
+                return new List<WatchlistMovie>();
+            }
+        }
+
+        //----------Supabase storage function----------
 
         public async Task UploadImage(byte[] bytes, string storagePath)
         {
             var content = new ByteArrayContent(bytes);
             content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
-            var request = new HttpRequestMessage(HttpMethod.Put,
-                $"{Url}/storage/v1/object/pictures/{storagePath}");
+            var request = new HttpRequestMessage(HttpMethod.Put, $"{Url}/storage/v1/object/pictures/{storagePath}");
             request.Content = content;
             AddApiHeaders(request);
 
             var response = await Http.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
+            {
                 MessageBox.Show($"UPLOAD FAILED ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+            }
         }
 
-        // ===================================================================
-        // PRIVATE HELPERS
-        // ===================================================================
+        //----------Get single movie by id----------
 
-        private HttpRequestMessage BuildRequest(HttpMethod method, string path, object body, string? prefer = null)
+        public async Task<Movies?> GetMovieById(long id)
+        {
+            var results = await GetAll<Movies>(
+                $"movies?select=id,title,poster_path,duration_minutes,rating,release_year,description,status,adult,director,movie_genres(genres(name)),movie_people(role,people(name,profile_path))&id=eq.{id}"
+            );
+            return results.Count > 0 ? results[0] : null;
+        }
+
+        //----------Get single person by id----------
+
+        public async Task<Person?> GetPersonById(long id)
+        {
+            var results = await GetAll<Person>(
+                $"people?select=*,movie_people(role,movies(id,title,poster_path))&id=eq.{id}"
+            );
+            return results.Count > 0 ? results[0] : null;
+        }
+
+        //----------Helpers----------
+
+        private HttpRequestMessage BuildRequest(HttpMethod method, string path, object body, string? prefer = null, string? userToken = null)
         {
             var request = new HttpRequestMessage(method, $"{Url}{path}");
             request.Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-            AddApiHeaders(request, prefer);
+            AddApiHeaders(request, prefer, userToken);
             return request;
         }
 
-        private void AddApiHeaders(HttpRequestMessage request, string? prefer = null)
+        private void AddApiHeaders(HttpRequestMessage request, string? prefer = null, string? userToken = null)
         {
             request.Headers.Remove("apikey");
             request.Headers.Remove("Authorization");
             request.Headers.Remove("Prefer");
 
             request.Headers.TryAddWithoutValidation("apikey", ApiKey);
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {ApiKey}");
+            string token = userToken ?? ApiKey;
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
 
             if (!string.IsNullOrEmpty(prefer))
+            {
                 request.Headers.TryAddWithoutValidation("Prefer", prefer);
+            }
         }
+    }
+
+    public class WatchlistMovie
+    {
+        public long movie_id { get; set; }
+        public Movies movies { get; set; }
     }
 }

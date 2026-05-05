@@ -36,6 +36,7 @@
             ProfileLabel = new ToolStripMenuItem();
             LogOutLabel = new ToolStripMenuItem();
             panel1 = new Panel();
+            printDocument1 = new System.Drawing.Printing.PrintDocument();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -170,5 +171,6 @@
         private ToolStripMenuItem ProfileLabel;
         private ToolStripMenuItem LogOutLabel;
         private Panel panel1;
+        private System.Drawing.Printing.PrintDocument printDocument1;
     }
 }

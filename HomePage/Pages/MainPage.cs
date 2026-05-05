@@ -17,25 +17,35 @@ namespace App
     {
         private const string SupabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
 
-        private static readonly HttpClient Http = AppHttpClient.Instance;
-        private static readonly SupabaseClient Supabase = new SupabaseClient();
-        private static readonly TMDB_Service Tmdb = new TMDB_Service(Supabase);
+        private static HttpClient Http = AppHttpClient.Instance;
+        private static SupabaseClient Supabase = new SupabaseClient();
+        private static TMDB_Service Tmdb = new TMDB_Service(Supabase);
 
         public MainPage()
         {
             InitializeComponent();
 
-            TitleBar titleBar = new TitleBar();
-            titleBar.Dock = DockStyle.Top;
-            Controls.Add(titleBar);
-
+            //Navigation bar
             NavigationBar navigationBar = new NavigationBar("main");
             navigationBar.Dock = DockStyle.Left;
             Controls.Add(navigationBar);
 
+            //Title bar
+            TitleBar titleBar = new TitleBar();
+            titleBar.Dock = DockStyle.Top;
+            Controls.Add(titleBar);
+
+            //Search bar
+            SearchBar searchBar = new SearchBar(new Point(300, 0), 850);
+            searchBar.Location = new Point(150, 32);
+            Controls.Add(searchBar);
+
+            //Configure flow panels
             ConfigureFlow(flowLayoutPanel1);
             ConfigureFlow(flowLayoutPanel2);
         }
+
+        //----------Flow panel configuration----------
 
         private static void ConfigureFlow(FlowLayoutPanel flow)
         {
@@ -46,9 +56,7 @@ namespace App
             flow.VerticalScroll.Visible = false;
         }
 
-        // -------------------------------------------------------------------
-        // Form load
-        // -------------------------------------------------------------------
+        //----------Form load function----------
         private async void MainPage_Load(object sender, EventArgs e)
         {
             try
@@ -57,16 +65,19 @@ namespace App
                 bool peopleExist = await DatabaseHasRows("people");
 
                 if (!moviesExist || !peopleExist)
+                {
                     await Tmdb.SyncAll();
+                }
 
-                await LoadMovies();
-                await LoadPeople();
+                await Task.WhenAll(LoadMovies(), LoadPeople());
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"MainPage_Load ERROR: {ex.Message}\n\n{ex.StackTrace}");
             }
         }
+
+        //----------Data check function----------
 
         private static async Task<bool> DatabaseHasRows(string table)
         {
@@ -81,9 +92,8 @@ namespace App
             }
         }
 
-        // -------------------------------------------------------------------
-        // Load movies — include genres and cast
-        // -------------------------------------------------------------------
+        //----------Movies loading function----------
+
         private async Task LoadMovies()
         {
             try
@@ -94,6 +104,7 @@ namespace App
 
                 flowLayoutPanel1.SuspendLayout();
                 flowLayoutPanel1.Controls.Clear();
+                flowLayoutPanel1.ResumeLayout();
 
                 foreach (var movie in movies)
                 {
@@ -103,8 +114,6 @@ namespace App
                     AttachClickRecursive(card, () => MovieCard_Click(card));
                     flowLayoutPanel1.Controls.Add(card);
                 }
-
-                flowLayoutPanel1.ResumeLayout();
             }
             catch (Exception ex)
             {
@@ -112,19 +121,17 @@ namespace App
             }
         }
 
-        // -------------------------------------------------------------------
-        // Load people — include their movies
-        // -------------------------------------------------------------------
+        //----------People loading function----------
+
         private async Task LoadPeople()
         {
             try
             {
-                var people = await Supabase.GetAll<Person>(
-                    "people?select=*,movie_people(role,movies(id,title,poster_path))"
-                );
+                var people = await Supabase.GetAll<Person>("people?select=*,movie_people(role,movies(id,title,poster_path))");
 
                 flowLayoutPanel2.SuspendLayout();
                 flowLayoutPanel2.Controls.Clear();
+                flowLayoutPanel2.ResumeLayout();
 
                 foreach (var person in people)
                 {
@@ -134,8 +141,6 @@ namespace App
                     AttachClickRecursive(card, () => PersonCard_Click(card));
                     flowLayoutPanel2.Controls.Add(card);
                 }
-
-                flowLayoutPanel2.ResumeLayout();
             }
             catch (Exception ex)
             {
@@ -143,30 +148,33 @@ namespace App
             }
         }
 
-        // -------------------------------------------------------------------
-        // Card builder
-        // -------------------------------------------------------------------
+        //----------Card creation----------
+
         private Panel CreateCard(string text, string imageUrl)
         {
+            //Card
             var card = new Panel
             {
-                Width = 150,
-                Height = 283,
+                Width = 122,
+                Height = 183,
                 BackColor = Color.FromArgb(36, 38, 69),
                 Cursor = Cursors.Hand,
                 Margin = new Padding(5, 0, 5, 0)
             };
 
+            //Poster
             var poster = new PictureBox
             {
                 Dock = DockStyle.Top,
-                Height = 225,
+                Height = card.Height,
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
+
+            //Adding paint and loading image
             poster.Paint += Poster_Paint;
+            var loadImage = LoadImageAsync(poster, imageUrl);
 
-            _ = LoadImageAsync(poster, imageUrl);
-
+            //Label
             var label = new Label
             {
                 Text = text,
@@ -178,12 +186,14 @@ namespace App
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            //Adding controls
             poster.Controls.Add(label);
             card.Controls.Add(poster);
 
             return card;
         }
 
+        //----------Card border function----------
         private void Poster_Paint(object sender, PaintEventArgs e)
         {
             var pb = sender as PictureBox;
@@ -191,15 +201,22 @@ namespace App
 
             var rect = new Rectangle(0, 0, pb.Width - 1, pb.Height - 1);
             using (var pen = new Pen(Color.FromArgb(255, 27, 29, 54), 5))
+            {
                 e.Graphics.DrawRectangle(pen, rect);
+            }
         }
 
+        //----------Click addition function---------- ???
         private static void AttachClickRecursive(Control ctrl, Action onClick)
         {
             ctrl.Click += (s, e) => onClick();
             foreach (Control child in ctrl.Controls)
+            {
                 AttachClickRecursive(child, onClick);
+            }
         }
+
+        //----------Image loading function----------
 
         private static async Task LoadImageAsync(PictureBox box, string url)
         {
@@ -212,13 +229,14 @@ namespace App
             catch
             {
                 if (!box.IsDisposed)
+                {
                     box.BackColor = Color.DarkGray;
+                }
             }
         }
 
-        // -------------------------------------------------------------------
-        // Navigation
-        // -------------------------------------------------------------------
+        //----------Movie click function----------
+
         private void MovieCard_Click(Panel card)
         {
             if (card?.Tag is not Movies movie) return;
@@ -233,11 +251,13 @@ namespace App
             new MoviePage(
                 movie.title, movie.duration_minutes, movie.rating, movie.release_year,
                 movie.description, posterPath, movie.status, movie.adult,
-                movie.director, genres, movie.movie_people
+                movie.director, genres, movie.movie_people, movie.id
             ).Show();
 
             Hide();
         }
+
+        //----------Person click function----------
 
         private void PersonCard_Click(Panel card)
         {
@@ -253,8 +273,5 @@ namespace App
 
             Hide();
         }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e) { }
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e) { }
     }
 }

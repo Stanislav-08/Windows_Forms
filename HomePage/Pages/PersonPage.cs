@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace App
     public partial class PersonPage : Form
     {
         private static readonly HttpClient Http = AppHttpClient.Instance;
+        private static readonly SupabaseClient Supabase = new SupabaseClient();
         private const string SupabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
 
         public PersonPage(string name, string info, string profilePath,
@@ -21,30 +23,29 @@ namespace App
         {
             InitializeComponent();
 
+            //Title bar
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             Controls.Add(titleBar);
 
             button9.Image = Icons.Get("back_arrow");
 
-            // Fill labels
+            //Assigning values
             label3.Text = name;
             label7.Text = string.IsNullOrEmpty(dateOfBirth) ? "Unknown" : dateOfBirth;
             label6.Text = string.IsNullOrEmpty(info) ? "No biography available." : info;
             label9.Text = string.IsNullOrEmpty(gender) ? "Unknown" : gender;
             label4.Text = string.IsNullOrEmpty(placeOfBirth) ? "Unknown" : placeOfBirth;
 
-            // Load profile picture
-            _ = LoadImageAsync(pictureBox1, profilePath);
+            //Load profile picture
+            var loadImage = LoadImageAsync(pictureBox1, profilePath);
 
-            // Configure and load movie flow panel
+            //Configure and load movie flow panel
             ConfigureFlow(flowLayoutPanel1);
             LoadMovies(movies);
         }
 
-        // ===================================================================
-        // FLOW PANEL
-        // ===================================================================
+        //----------Flow panel configuration----------
 
         private static void ConfigureFlow(FlowLayoutPanel flow)
         {
@@ -54,6 +55,8 @@ namespace App
             flow.HorizontalScroll.Visible = false;
             flow.VerticalScroll.Visible = false;
         }
+
+        //----------Movies loading function----------
 
         private void LoadMovies(List<MoviePerson>? movies)
         {
@@ -76,12 +79,14 @@ namespace App
             flowLayoutPanel1.ResumeLayout();
         }
 
+        //----------Card creation----------
+
         private Panel CreateMovieCard(string title, string role, string imageUrl)
         {
             var card = new Panel
             {
-                Width = 150,
-                Height = 283,
+                Width = 122,
+                Height = 183,
                 BackColor = Color.FromArgb(36, 38, 69),
                 Cursor = Cursors.Hand,
                 Margin = new Padding(5, 0, 5, 0)
@@ -90,10 +95,10 @@ namespace App
             var poster = new PictureBox
             {
                 Dock = DockStyle.Top,
-                Height = 225,
+                Height = card.Height,
                 SizeMode = PictureBoxSizeMode.StretchImage
             };
-            _ = LoadImageAsync(poster, imageUrl);
+            var loadImage = LoadImageAsync(poster, imageUrl);
 
             var titleLabel = new Label
             {
@@ -125,40 +130,44 @@ namespace App
             return card;
         }
 
-        // ===================================================================
-        // NAVIGATION
-        // ===================================================================
+        //----------Click function----------
 
-        private void MovieCard_Click(Panel card)
+        private async void MovieCard_Click(Panel card)
         {
-            if (card?.Tag is not Movies movie) return;
+            if (card?.Tag is not Movies partialMovie) return;
+
+            //Fetch full movie data by id
+            var movie = await Supabase.GetMovieById(partialMovie.id);
+            if (movie == null) return;
 
             string posterPath = $"{SupabaseUrl}/storage/v1/object/public/pictures/{movie.poster_path}";
             var genreNames = movie.movie_genres?
                 .Select(mg => mg.genres?.name)
                 .Where(n => n != null)
-                .ToList() ?? new System.Collections.Generic.List<string>();
+                .ToList() ?? new List<string>();
             string genres = string.Join(", ", genreNames);
 
             new MoviePage(
                 movie.title, movie.duration_minutes, movie.rating, movie.release_year,
                 movie.description, posterPath, movie.status, movie.adult,
-                movie.director, genres, movie.movie_people
+                movie.director, genres, movie.movie_people, movie.id
             ).Show();
 
             Hide();
         }
 
+        //----------Click addition function----------
+
         private static void AttachClickRecursive(Control ctrl, Action onClick)
         {
             ctrl.Click += (s, e) => onClick();
             foreach (Control child in ctrl.Controls)
+            {
                 AttachClickRecursive(child, onClick);
+            }
         }
 
-        // ===================================================================
-        // IMAGE LOADING
-        // ===================================================================
+        //----------Image loading function----------
 
         private static async Task LoadImageAsync(PictureBox box, string url)
         {
@@ -171,9 +180,13 @@ namespace App
             catch
             {
                 if (!box.IsDisposed)
+                {
                     box.BackColor = Color.DarkGray;
+                }
             }
         }
+
+        //----------Back button----------
 
         private void button9_Click(object sender, EventArgs e)
         {

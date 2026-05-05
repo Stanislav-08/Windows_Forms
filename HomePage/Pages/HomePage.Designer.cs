@@ -29,40 +29,19 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomePage));
-            textBox1 = new TextBox();
-            button1 = new Button();
             RegisterButton = new Button();
             LoginButton = new Button();
             pictureBox1 = new PictureBox();
+            label2 = new Label();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(166, 272);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(532, 23);
-            textBox1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            button1.BackColor = SystemColors.ButtonHighlight;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.ForeColor = SystemColors.ActiveCaptionText;
-            button1.Location = new Point(704, 272);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 1;
-            button1.Text = "Search";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
             // 
             // RegisterButton
             // 
             RegisterButton.BackColor = SystemColors.ButtonHighlight;
             RegisterButton.Font = new Font("Arial", 10.2F, FontStyle.Bold);
-            RegisterButton.Location = new Point(338, 299);
+            RegisterButton.Location = new Point(372, 362);
             RegisterButton.Name = "RegisterButton";
             RegisterButton.Size = new Size(125, 23);
             RegisterButton.TabIndex = 2;
@@ -74,7 +53,7 @@
             // 
             LoginButton.BackColor = SystemColors.ButtonHighlight;
             LoginButton.Font = new Font("Arial", 10.2F, FontStyle.Bold);
-            LoginButton.Location = new Point(469, 299);
+            LoginButton.Location = new Point(503, 362);
             LoginButton.Name = "LoginButton";
             LoginButton.Size = new Size(127, 23);
             LoginButton.TabIndex = 3;
@@ -93,17 +72,39 @@
             pictureBox1.TabIndex = 4;
             pictureBox1.TabStop = false;
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.ForeColor = SystemColors.ButtonHighlight;
+            label2.Location = new Point(429, 270);
+            label2.Name = "label2";
+            label2.Size = new Size(135, 16);
+            label2.TabIndex = 38;
+            label2.Text = "Continue as guest";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Arial", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.ForeColor = SystemColors.ButtonHighlight;
+            label1.Location = new Point(488, 336);
+            label1.Name = "label1";
+            label1.Size = new Size(24, 16);
+            label1.TabIndex = 39;
+            label1.Text = "Or";
+            // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(36, 38, 69);
             ClientSize = new Size(1000, 500);
+            Controls.Add(label1);
+            Controls.Add(label2);
             Controls.Add(pictureBox1);
             Controls.Add(LoginButton);
             Controls.Add(RegisterButton);
-            Controls.Add(button1);
-            Controls.Add(textBox1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "HomePage";
             Text = "HomePage";
@@ -113,11 +114,11 @@
         }
 
         #endregion
-
-        private TextBox textBox1;
         private Button button1;
         private Button RegisterButton;
         private Button LoginButton;
         private PictureBox pictureBox1;
+        private Label label2;
+        private Label label1;
     }
 }

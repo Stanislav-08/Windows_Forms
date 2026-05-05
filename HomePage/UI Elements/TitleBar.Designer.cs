@@ -30,9 +30,9 @@
         {
             titleBarHolder = new Panel();
             titleBarButtonsHolder = new Panel();
-            closeButton = new Button();
-            maximizeButton = new Button();
-            minimizeButton = new Button();
+            CloseButton = new Button();
+            MaximizeButton = new Button();
+            MinimizeButton = new Button();
             titleBarHolder.SuspendLayout();
             titleBarButtonsHolder.SuspendLayout();
             SuspendLayout();
@@ -49,47 +49,47 @@
             // 
             // titleBarButtonsHolder
             // 
-            titleBarButtonsHolder.Controls.Add(closeButton);
-            titleBarButtonsHolder.Controls.Add(maximizeButton);
-            titleBarButtonsHolder.Controls.Add(minimizeButton);
+            titleBarButtonsHolder.Controls.Add(CloseButton);
+            titleBarButtonsHolder.Controls.Add(MaximizeButton);
+            titleBarButtonsHolder.Controls.Add(MinimizeButton);
             titleBarButtonsHolder.Dock = DockStyle.Right;
             titleBarButtonsHolder.Location = new Point(865, 0);
             titleBarButtonsHolder.Name = "titleBarButtonsHolder";
             titleBarButtonsHolder.Size = new Size(135, 32);
             titleBarButtonsHolder.TabIndex = 0;
             // 
-            // closeButton
+            // CloseButton
             // 
-            closeButton.FlatAppearance.BorderSize = 0;
-            closeButton.FlatStyle = FlatStyle.Flat;
-            closeButton.Location = new Point(90, 0);
-            closeButton.Name = "closeButton";
-            closeButton.Size = new Size(45, 32);
-            closeButton.TabIndex = 2;
-            closeButton.UseVisualStyleBackColor = true;
-            closeButton.Click += closeButton_Click;
+            CloseButton.FlatAppearance.BorderSize = 0;
+            CloseButton.FlatStyle = FlatStyle.Flat;
+            CloseButton.Location = new Point(90, 0);
+            CloseButton.Name = "CloseButton";
+            CloseButton.Size = new Size(45, 32);
+            CloseButton.TabIndex = 2;
+            CloseButton.UseVisualStyleBackColor = true;
+            CloseButton.Click += closeButton_Click;
             // 
-            // maximizeButton
+            // MaximizeButton
             // 
-            maximizeButton.FlatAppearance.BorderSize = 0;
-            maximizeButton.FlatStyle = FlatStyle.Flat;
-            maximizeButton.Location = new Point(45, 0);
-            maximizeButton.Name = "maximizeButton";
-            maximizeButton.Size = new Size(45, 32);
-            maximizeButton.TabIndex = 1;
-            maximizeButton.UseVisualStyleBackColor = true;
-            maximizeButton.Click += maximizeButton_Click;
+            MaximizeButton.FlatAppearance.BorderSize = 0;
+            MaximizeButton.FlatStyle = FlatStyle.Flat;
+            MaximizeButton.Location = new Point(45, 0);
+            MaximizeButton.Name = "MaximizeButton";
+            MaximizeButton.Size = new Size(45, 32);
+            MaximizeButton.TabIndex = 1;
+            MaximizeButton.UseVisualStyleBackColor = true;
+            MaximizeButton.Click += maximizeButton_Click;
             // 
-            // minimizeButton
+            // MinimizeButton
             // 
-            minimizeButton.FlatAppearance.BorderSize = 0;
-            minimizeButton.FlatStyle = FlatStyle.Flat;
-            minimizeButton.Location = new Point(0, 0);
-            minimizeButton.Name = "minimizeButton";
-            minimizeButton.Size = new Size(45, 32);
-            minimizeButton.TabIndex = 0;
-            minimizeButton.UseVisualStyleBackColor = true;
-            minimizeButton.Click += minimizeButton_Click;
+            MinimizeButton.FlatAppearance.BorderSize = 0;
+            MinimizeButton.FlatStyle = FlatStyle.Flat;
+            MinimizeButton.Location = new Point(0, 0);
+            MinimizeButton.Name = "MinimizeButton";
+            MinimizeButton.Size = new Size(45, 32);
+            MinimizeButton.TabIndex = 0;
+            MinimizeButton.UseVisualStyleBackColor = true;
+            MinimizeButton.Click += minimizeButton_Click;
             // 
             // TitleBar
             // 
@@ -108,8 +108,8 @@
 
         private Panel titleBarHolder;
         private Panel titleBarButtonsHolder;
-        private Button minimizeButton;
-        private Button closeButton;
-        private Button maximizeButton;
+        private Button MinimizeButton;
+        private Button CloseButton;
+        private Button MaximizeButton;
     }
 }

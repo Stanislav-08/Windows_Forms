@@ -1,11 +1,4 @@
-using App;
-using App.Services;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Windows.Forms;
+using App.UI_Elements;
 
 namespace App.Pages
 {
@@ -15,10 +8,18 @@ namespace App.Pages
         {
             InitializeComponent();
 
+            //Title bar
             TitleBar titleBar = new TitleBar();
             titleBar.Dock = DockStyle.Top;
             this.Controls.Add(titleBar);
+
+            //Search bar
+            SearchBar searchBar = new SearchBar(new Point(300, 0), 650);
+            searchBar.Location = new Point(175, 300);
+            Controls.Add(searchBar);
         }
+
+        //----------Login button----------
 
         private void LoginButton_Click(object sender, EventArgs e)
         {
@@ -27,26 +28,13 @@ namespace App.Pages
             Hide();
         }
 
+        //----------Register button----------
+
         private void RegisterButton_Click(object sender, EventArgs e)
         {
             RegisterPage registerPage = new RegisterPage();
             registerPage.Show();
             Hide();
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MainPage mainPage = new MainPage();
-            mainPage.Show();
-            Hide();
-        }
-    }
-
-    public class Movie
-    {
-        public string title { get; set; }
-        public int? release_year { get; set; }
-        public float? rating { get; set; }
-        public string description { get; set; }
     }
 }
