@@ -1,14 +1,6 @@
 ﻿using App.Databases;
 using App.Services;
 using App.UI_Elements;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace App
 {
@@ -151,7 +143,9 @@ namespace App
         {
             ctrl.Click += (s, e) => onClick();
             foreach (Control child in ctrl.Controls)
+            {
                 AttachClickRecursive(child, onClick);
+            }
         }
 
         //----------Image loading function----------

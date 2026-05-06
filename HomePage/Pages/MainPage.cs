@@ -1,21 +1,13 @@
 ﻿using App.Databases;
 using App.Services;
 using App.UI_Elements;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace App
 {
     public partial class MainPage : Form
     {
-        private const string SupabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
+        private string SupabaseUrl = "https://sbhlzychksdsmhtawhrp.supabase.co";
 
         private static HttpClient Http = AppHttpClient.Instance;
         private static SupabaseClient Supabase = new SupabaseClient();

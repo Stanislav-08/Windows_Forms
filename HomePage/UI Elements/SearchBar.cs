@@ -82,7 +82,7 @@ namespace App.UI_Elements
                     "people?select=*,movie_people(role,movies(id,title,poster_path))"
                 );
 
-                // Ensure we're on the UI thread before assigning
+                // Ensure we are on the UI thread before assigning
                 if (InvokeRequired)
                 {
                     Invoke(() =>

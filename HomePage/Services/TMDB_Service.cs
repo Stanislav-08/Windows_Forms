@@ -1,13 +1,4 @@
-﻿using App.Databases;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Text.Json;
 
 namespace App.Services
 {

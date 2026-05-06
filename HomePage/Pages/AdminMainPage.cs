@@ -1,15 +1,6 @@
 ﻿using App.Databases;
 using App.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace App
 {
@@ -230,7 +221,11 @@ namespace App
                     );
 
                     var titles = movies.Select(m => m.title).ToArray();
-                    if (titles.Length == 0) { MessageBox.Show("No movies found."); return; }
+                    if (titles.Length == 0) 
+                    {
+                        MessageBox.Show("No movies found."); 
+                        return;
+                    }
 
                     var picker = new Form();
                     picker.Text = "Select Movie";
@@ -261,7 +256,11 @@ namespace App
                     );
 
                     var names = people.Select(p => p.name).ToArray();
-                    if (names.Length == 0) { MessageBox.Show("No people found."); return; }
+                    if (names.Length == 0)
+                    { 
+                        MessageBox.Show("No people found.");
+                        return; 
+                    }
 
                     var picker = new Form();
                     picker.Text = "Select Person";

@@ -1,7 +1,5 @@
 ﻿using App.Pages;
 using App.Services;
-using System;
-using System.Windows.Forms;
 
 namespace App
 {

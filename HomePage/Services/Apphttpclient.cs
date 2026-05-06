@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace App.Services
+﻿namespace App.Services
 {
     public static class AppHttpClient
     {

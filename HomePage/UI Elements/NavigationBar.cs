@@ -1,7 +1,5 @@
 ﻿using App.Pages;
 using App.Services;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace App.UI_Elements
 {
@@ -13,6 +11,7 @@ namespace App.UI_Elements
         public NavigationBar(string activePage)
         {
             InitializeComponent();
+
             HomeButton.Image = Icons.Get("home", 36);
             ProfileButton.Image = Icons.Get("profile", 36);
             LogOutButton.Image = Icons.Get("log_out", 36);
